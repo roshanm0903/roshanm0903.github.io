@@ -1,28 +1,20 @@
-
 <!DOCTYPE html>
 <html>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("p").click(function(){
+    $(this).hide();
+  });
+});
+</script>
+</head>
 <body>
 
-<h1>Hello
-This is My home page </h1>
-  <span id="demo>Old Text</span>
-  
-            
-<script>
-let url = 'https://script.google.com/macros/s/AKfycbxnMNglGVi7FrPg9EJ3HuhrqrUFL4XvWkg92exgswEB2MgWT4gjzuf5n9Rn5Csvc5yJ6w/exec';
-
-fetch(url)
-.then(res => res.json())
-.then((out) => {
-  console.log('Checkout this JSON! ', out);
-  document.getElementById("demo").innerHTML = "My First JavaScript";
-})
-.catch(err => { throw err });
-                                                                   
-  </script>
+<p>If you click on me, I will disappear.</p>
+<p>Click me away!</p>
+<p>Click me too!</p>
 
 </body>
 </html>
