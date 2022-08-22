@@ -8,6 +8,21 @@
 
 <h1>Hello
 This is My home page </h1>
+  <span id="demo>Old Text</span>
+  
+            
+<script>
+let url = 'https://script.google.com/macros/s/AKfycbxnMNglGVi7FrPg9EJ3HuhrqrUFL4XvWkg92exgswEB2MgWT4gjzuf5n9Rn5Csvc5yJ6w/exec';
+
+fetch(url)
+.then(res => res.json())
+.then((out) => {
+  console.log('Checkout this JSON! ', out);
+  document.getElementById("demo").innerHTML = "My First JavaScript";
+})
+.catch(err => { throw err });
+                                                                   
+  </script>
 
 </body>
 </html>
