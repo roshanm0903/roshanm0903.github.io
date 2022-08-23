@@ -4,40 +4,162 @@
 	<script type="text/javascript" 
             src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
     </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" /> 
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+
+
+
 	<script type="text/javascript">
-        $(document).ready(function () {
-			
-		 $('#ajaxBtn').click(function(){
-			
+        var FundDetails = [];
+        var FundSelected = [];
+        var FundData = [];
+        var id = 1;
+
+        $(document).ready(function () {		
+            
+        $("#FundInput").select2();
+
 			$.ajax({ 
            method: "get", 
-           url: "https://script.google.com/macros/s/AKfycbxnMNglGVi7FrPg9EJ3HuhrqrUFL4XvWkg92exgswEB2MgWT4gjzuf5n9Rn5Csvc5yJ6w/exec"
+           url: "https://script.google.com/macros/s/AKfycbzEqBzXTk0EPb9Hln-sw72hkUnDZD0C4_c_9laHcpL9KglW5R3ZLUpgrtgZpwcoxncYXg/exec"
         //    data: {}
 
          }).done(function( data ) { 
 
            var result = data; 
 		   	console.log(result.data[1].FundName);
-			$('p').append(result.data[1].FundName);
+			$('p').append("Loaded");
+			// console.log("Printing result");
 
-          /* from result create a string of data and append to the div */
-        //    $.each( result, function( key, value ) { 
-		// 	console.log(value['FundName']);
+			for (fund in result.data){
+				// console.log(result.data[fund].FundName);
+				FundDetails.push([result.data[fund].FundName, result.data[fund].Link]);
 
-		//    });
+			}
+			// console.log(FundDetails);
+
+			// return FundDetails;
 
 		});
-
     });
-});
 
-    </script>
+        function addRow(){
+            var DivString = ' <div class = "container"> <div class = "row"> <div class="form-outline mb-4"> \
+            <select id="FundInput' + id +'"';  
+            
+            for (fund in FundDetails){
+                DivString = DivString + "<option>";
+                // console.log(FundDetails[fund][0]);
+                DivString = DivString + FundDetails[fund][0];
+                DivString = DivString + "</option>";
+            }
+            DivString = DivString + "</select></div> ";
+
+            DivString = DivString + '<div><input type="number" class="form-outline mb-4" id="Amount" placeholder="Enter Amount"' + id +'> </div>';
+            // check mark for making making it the comparison? 
+            DivString = DivString + "</div></div>";
+            $('#Funds').append(DivString); 
+
+            $('#FundInput'+id).select2();
+        // });
+            id = id + 1;
+
+            }
+
+        // search for the links of the funds selected
+        function getLink(fundName){
+            for (var i=1; i< FundDetails.length; i++){
+                if (FundDetails[i][0] == fundName){
+                    return FundDetails[i][1];
+                }
+            }
+
+        }    
+
+        //// get data from the link
+
+        function getdata(Funds){
+        
+            for (fund in Funds){
+
+            console.log("Getting data from appsciprt");
+            $.ajax({ 
+           method: "get", 
+           url: " https://script.google.com/macros/s/AKfycbxjaHWev0cU8dFv1aVaaNDBGuNzcnTgno68z-w3KtphUWcPrEHKLnaI9C25lVYVLmBX/exec",
+            data: {
+                fundName : Funds[fund][0]
+            }
+
+            }).done(function( data ) {            
+                var result = data; 
+                console.log(data);                
+                 })
+            }
+
+            }
+            
+
+
+        function calculate(){
+        
+            // get the funds selected and its link in the form of array
+            for (var i=1 ; i < id ; i++){
+                var fund = document.getElementById("FundInput"+i).options[document.getElementById("FundInput"+i).selectedIndex].text;
+                console.log(fund);
+                FundSelected.push([fund , getLink(fund)]); 
+                getdata(FundSelected);
+                // console.log(FundSelected);
+                // $('#Funds').append(FundSelected);
+            }
+
+            // perform dot product between the first and second fund
+
+        }
+
+
+
+      
+        </script>
+
+
 </head>
 <body>
-	<h1> jQuery get() method demo 
-	</h1>
-	<input type="button" id="ajaxBtn" value="Send GET request" />
-	<p>
-	</p>
+	
+    <h1> Analyser
+    </h1>
+<p>
+
+</p>
+    <section class="w-100 p-4 d-flex justify-content-center pb-4">
+   
+    <div>
+
+    
+    <form style="width: 50rem;">
+        <div>
+
+        </div>
+        <!-- <div class="form-group"> -->
+
+    <div id='Funds'>
+    </div>
+    
+    <div class="row">
+    <button type="button" id="AddFundsBtn" onclick="addRow()" class="btn btn-primary btn-block mb-4">Add Fund</button>
+    </div>
+    
+    <br>
+
+    <button type="button" id="Calculate" onclick="calculate()" class="btn btn-primary btn-block mb-4">Calulate</button>
+    </form>
+    </div>
+
+</section>
+
+
+    
 </body>
 </html>
