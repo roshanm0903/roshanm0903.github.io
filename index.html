@@ -1,20 +1,43 @@
-<!DOCTYPE html>
 <html>
 <head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
-$(document).ready(function(){
-  $("p").click(function(){
-    $(this).hide();
-  });
+    <meta name="viewport" content="width=device-width" />
+	<script type="text/javascript" 
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
+    </script>
+	<script type="text/javascript">
+        $(document).ready(function () {
+			
+		 $('#ajaxBtn').click(function(){
+			
+			$.ajax({ 
+           method: "get", 
+           url: "https://script.google.com/macros/s/AKfycbxnMNglGVi7FrPg9EJ3HuhrqrUFL4XvWkg92exgswEB2MgWT4gjzuf5n9Rn5Csvc5yJ6w/exec"
+        //    data: {}
+
+         }).done(function( data ) { 
+
+           var result = data; 
+		   	console.log(result.data[1].FundName);
+			$('p').append(result.data[1].FundName);
+
+          /* from result create a string of data and append to the div */
+        //    $.each( result, function( key, value ) { 
+		// 	console.log(value['FundName']);
+
+		//    });
+
+		});
+
+    });
 });
-</script>
+
+    </script>
 </head>
 <body>
-
-<p>If you click on me, I will disappear.</p>
-<p>Click me away!</p>
-<p>Click me too!</p>
-
+	<h1> jQuery get() method demo 
+	</h1>
+	<input type="button" id="ajaxBtn" value="Send GET request" />
+	<p>
+	</p>
 </body>
 </html>
