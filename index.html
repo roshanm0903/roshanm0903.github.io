@@ -1,6 +1,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
+    
 	<script type="text/javascript" 
             src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
     </script>
@@ -9,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" /> 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
 
-
+    <script src="getFunds.js"></script>
 
 
 	<script type="text/javascript">
@@ -62,9 +63,8 @@
             // check mark for making making it the comparison? 
             DivString = DivString + "</div></div>";
             $('#Funds').append(DivString); 
-
             $('#FundInput'+id).select2();
-        // });
+    
             id = id + 1;
 
             }
@@ -82,24 +82,56 @@
         //// get data from the link
 
         function getdata(Funds){
-        
+            var fundname_concat = [];
+
             for (fund in Funds){
+                fundname_concat = fundname_concat + Funds[fund][0] + " ";
+            }
 
             console.log("Getting data from appsciprt");
             $.ajax({ 
-           method: "get", 
-           url: " https://script.google.com/macros/s/AKfycbxjaHWev0cU8dFv1aVaaNDBGuNzcnTgno68z-w3KtphUWcPrEHKLnaI9C25lVYVLmBX/exec",
-            data: {
-                fundName : Funds[fund][0]
+                method: "get", 
+                url: "https://script.google.com/macros/s/AKfycbyIy6shJ7Mh1Zxlo3ERwMatVcXIEmNvvbn7smzQ6l0ki4cSQg62hfJicZUaduV-MgFF/exec",
+                data: {
+                fundName : fundname_concat
             }
 
             }).done(function( data ) {            
                 var result = data; 
-                console.log(data);                
+                console.log(result);
+                FundData.push[result];
+
+                            
                  })
             }
+            
+            // var urlString = "https://script.google.com/macros/s/AKfycbxjaHWev0cU8dFv1aVaaNDBGuNzcnTgno68z-w3KtphUWcPrEHKLnaI9C25lVYVLmBX/exec" + "?fundName=" + Funds[fund][0];
+            
+            // getapi(urlString);
 
-            }
+            // }
+
+            console.log(FundData);    
+            // var urlString = " https://script.google.com/macros/s/AKfycbxjaHWev0cU8dFv1aVaaNDBGuNzcnTgno68z-w3KtphUWcPrEHKLnaI9C25lVYVLmBX/exec" + "?fundName=" +  encodeURI(Funds[fund][0]);
+            // // urlParams = parseURLParams(urlString);
+            // // console.log(urlParams);
+
+            // // async function funcName(urlString){
+            //     console.log("Getting data 2 " + urlString);
+            //     const response =  fetch(urlString);
+            //         // var data = response.json();
+            //         console.log(response);
+            // // }
+
+
+            // let url = " https://script.google.com/macros/s/AKfycbxjaHWev0cU8dFv1aVaaNDBGuNzcnTgno68z-w3KtphUWcPrEHKLnaI9C25lVYVLmBX/exec" + "?fundName=" +  encodeURI(Funds[fund][0]);
+            
+            // let params = (new URL(url)).searchParams;
+            // params.get('name') # => "n1"
+            // params.getAll('name') # => ["n1", "n2"]
+
+            // }
+        // }
             
 
 
@@ -118,6 +150,27 @@
             // perform dot product between the first and second fund
 
         }
+
+        // function parseURLParams(url) {
+        // var queryStart = url.indexOf("?") + 1,
+        // queryEnd   = url.indexOf("#") + 1 || url.length + 1,
+        // query = url.slice(queryStart, queryEnd - 1),
+        // pairs = query.replace(/\+/g, " ").split("&"),
+        // parms = {}, i, n, v, nv;
+
+        //     if (query === url || query === "") return;
+
+        //     for (i = 0; i < pairs.length; i++) {
+        //         nv = pairs[i].split("=", 2);
+        //         n = decodeURIComponent(nv[0]);
+        //         v = decodeURIComponent(nv[1]);
+
+        //         if (!parms.hasOwnProperty(n)) parms[n] = [];
+        //         parms[n].push(nv.length === 2 ? v : null);
+        //     }
+        // return parms;
+
+        // };
 
 
 
@@ -156,6 +209,11 @@
     <button type="button" id="Calculate" onclick="calculate()" class="btn btn-primary btn-block mb-4">Calulate</button>
     </form>
     </div>
+
+    <div class="spinner-border" 
+                 role="status" id="loading">
+                <span class="sr-only">Loading...</span>
+            </div>
 
 </section>
 
