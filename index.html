@@ -9,6 +9,7 @@
     
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" /> 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"> </script>
 
     <script src="getFunds.js"></script>
 
@@ -59,8 +60,11 @@
             }
             DivString = DivString + "</select></div> ";
 
-            DivString = DivString + '<div><input type="number" class="form-outline mb-4" id="Amount" placeholder="Enter Amount"' + id +'> </div>';
+            DivString = DivString + '<div><input type="number" class="form-outline mb-4"  placeholder="Enter Amount" id="Amount' + id +'"> </div>';
             // check mark for making making it the comparison? 
+            DivString = DivString + ' <div class="form-check form-switch"> \
+                <input class="form-check-input" type="checkbox" id="Fundselect' + id +'"> </div>';
+
             DivString = DivString + "</div></div>";
             $('#Funds').append(DivString); 
             $('#FundInput'+id).select2();
@@ -83,10 +87,12 @@
 
         function getdata(Funds){
             var fundname_concat = [];
+            FundData = [];
 
             for (fund in Funds){
-                fundname_concat = fundname_concat + Funds[fund][0] + " ";
+                fundname_concat = fundname_concat + Funds[fund][0] + ", ";
             }
+            console.log(fundname_concat);
 
             console.log("Getting data from appsciprt");
             $.ajax({ 
@@ -96,82 +102,121 @@
                 fundName : fundname_concat
             }
 
-            }).done(function( data ) {            
-                var result = data; 
-                console.log(result);
-                FundData.push[result];
-
-                            
+            }).done(function( data ) {     
+                var result = data["data"]; 
+                generatePorfolio(Funds,result);
                  })
+                
+      
+        }
+
+        function generatePorfolio(Funds, FundDetails){
+
+            // get share of fund for each stock.
+
+            var securityWise = {};
+            var industryWise = {};
+
+            var UserFunds = Funds[0].map((_, colIndex) => Funds.map(row => row[colIndex])); // transpose
+
+            for (row in FundDetails){
+                // multiply the security fractional ammount with the fund amount
+                var Amount = UserFunds[1][ UserFunds[0].indexOf(FundDetails[row][0])];
+                var secAmount = FundDetails[row][3]* Amount
+                FundDetails[row].push(secAmount );
+                
+                //sumarise by security wise
+                if ( FundDetails[row][1] in securityWise ){
+                    // security already exists, add the amounts
+                    securityWise[FundDetails[row][1]] += secAmount;
+                } else{
+                    //security doesnt exists, add the security and the amount
+                    securityWise[FundDetails[row][1]] = secAmount;
+                
+                }
+
+                //sumarise by industry wise
+                if ( FundDetails[row][2] in industryWise ){
+                    // security already exists, add the amounts
+                    industryWise[FundDetails[row][2]] += secAmount;
+                } else{
+                    //security doesnt exists, add the security and the amount
+                    industryWise[FundDetails[row][2]] = secAmount;
+                }
+
             }
+
+            // percentage
+
+
+
+            // console.log("fund Data appened with share");
+            console.log(FundDetails);
+            console.log(securityWise);
+            console.log(industryWise);
+
+            var data = getSortedData(securityWise);
+
+            var myChart_sec = new Chart("myChart_sec", {
+                    type: "bar",
+                    data: {labels: data[0],
+                        datasets: [{ data:data[1]}]
+                    },
+                    options: {}
+                    });
+
+            var data = getSortedData(industryWise);
+          
+            var myChart_ind = new Chart("myChart_ind", {
+                    type: "bar",
+                    data: {labels: data[0],
+                        datasets: [{ data:data[1] }]
+                    },
+                    options: {}
+                    });
             
-            // var urlString = "https://script.google.com/macros/s/AKfycbxjaHWev0cU8dFv1aVaaNDBGuNzcnTgno68z-w3KtphUWcPrEHKLnaI9C25lVYVLmBX/exec" + "?fundName=" + Funds[fund][0];
+        }
+
+        function getSortedData(dict){
+   
+            var items = Object.keys(dict).map(function(key) {
+                  return [key, dict[key]];
+                });
+
+            items.sort(function(first, second) {
+                return second[1] - first[1];
+            });
+
+            items  = transpose(items);
             
-            // getapi(urlString);
+            return items;
 
-            // }
+        }
 
-            console.log(FundData);    
-            // var urlString = " https://script.google.com/macros/s/AKfycbxjaHWev0cU8dFv1aVaaNDBGuNzcnTgno68z-w3KtphUWcPrEHKLnaI9C25lVYVLmBX/exec" + "?fundName=" +  encodeURI(Funds[fund][0]);
-            // // urlParams = parseURLParams(urlString);
-            // // console.log(urlParams);
-
-            // // async function funcName(urlString){
-            //     console.log("Getting data 2 " + urlString);
-            //     const response =  fetch(urlString);
-            //         // var data = response.json();
-            //         console.log(response);
-            // // }
-
-
-            // let url = " https://script.google.com/macros/s/AKfycbxjaHWev0cU8dFv1aVaaNDBGuNzcnTgno68z-w3KtphUWcPrEHKLnaI9C25lVYVLmBX/exec" + "?fundName=" +  encodeURI(Funds[fund][0]);
-            
-            // let params = (new URL(url)).searchParams;
-            // params.get('name') # => "n1"
-            // params.getAll('name') # => ["n1", "n2"]
-
-            // }
-        // }
-            
-
+        function transpose(arr){
+            var arr_t = arr[0].map((_, colIndex) => arr.map(row => row[colIndex])); // transpose
+            return arr_t
+        }
 
         function calculate(){
+            var FundSelected = [];
+            // var FundData = [];
         
-            // get the funds selected and its link in the form of array
+            // get the funds selected and its link in the form of an array
             for (var i=1 ; i < id ; i++){
                 var fund = document.getElementById("FundInput"+i).options[document.getElementById("FundInput"+i).selectedIndex].text;
-                console.log(fund);
-                FundSelected.push([fund , getLink(fund)]); 
-                getdata(FundSelected);
-                // console.log(FundSelected);
-                // $('#Funds').append(FundSelected);
+                var fundAmount = document.getElementById("Amount"+i).value;
+                var selected = document.getElementById("Fundselect"+i).checked;                
+                // console.log(fund);
+                FundSelected.push([fund,Number(fundAmount),selected]); 
+
             }
+
+            getdata(FundSelected);
 
             // perform dot product between the first and second fund
 
         }
-
-        // function parseURLParams(url) {
-        // var queryStart = url.indexOf("?") + 1,
-        // queryEnd   = url.indexOf("#") + 1 || url.length + 1,
-        // query = url.slice(queryStart, queryEnd - 1),
-        // pairs = query.replace(/\+/g, " ").split("&"),
-        // parms = {}, i, n, v, nv;
-
-        //     if (query === url || query === "") return;
-
-        //     for (i = 0; i < pairs.length; i++) {
-        //         nv = pairs[i].split("=", 2);
-        //         n = decodeURIComponent(nv[0]);
-        //         v = decodeURIComponent(nv[1]);
-
-        //         if (!parms.hasOwnProperty(n)) parms[n] = [];
-        //         parms[n].push(nv.length === 2 ? v : null);
-        //     }
-        // return parms;
-
-        // };
-
 
 
       
@@ -193,9 +238,7 @@
     
     <form style="width: 50rem;">
         <div>
-
         </div>
-        <!-- <div class="form-group"> -->
 
     <div id='Funds'>
     </div>
@@ -217,6 +260,8 @@
 
 </section>
 
+<canvas id="myChart_sec" style="width:100%;max-width:700px"></canvas>
+<canvas id="myChart_ind" style="width:100%;max-width:700px"></canvas>
 
     
 </body>
