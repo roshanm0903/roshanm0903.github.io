@@ -119,68 +119,114 @@
 
             var UserFunds = Funds[0].map((_, colIndex) => Funds.map(row => row[colIndex])); // transpose
 
+            var portfolioAmount  =  UserFunds[1].reduce((a, b) => a + b, 0);
+
+            // get the single fund name which is to be compared with the portfolio
+            var compFund = UserFunds[0][ UserFunds[2].indexOf(true)]; 
+            
+            document.getElementById("message1").innerHTML = "Comparing the selected fund, " + compFund + ", with rest of the Portfolio";
+
             for (row in FundDetails){
                 // multiply the security fractional ammount with the fund amount
                 var Amount = UserFunds[1][ UserFunds[0].indexOf(FundDetails[row][0])];
-                var secAmount = FundDetails[row][3]* Amount
+                var secAmount = (FundDetails[row][3]*Amount);
                 FundDetails[row].push(secAmount );
-                
+
                 //sumarise by security wise
-                if ( FundDetails[row][1] in securityWise ){
+                if ( FundDetails[row][1] in securityWise ){     // { "security name 1" : [ amount , portfolio_percentage, compfund_shareholding], "security name w" : [ amount , portfolio_percentage, compfund_shareholding],...  }
                     // security already exists, add the amounts
-                    securityWise[FundDetails[row][1]] += secAmount;
+                    securityWise[FundDetails[row][1]][0] += secAmount; // amount
+                    securityWise[FundDetails[row][1]][1] += (secAmount/portfolioAmount); // as percentage
+                    securityWise[FundDetails[row][1]][2] = checkCompFund(compFund,FundDetails[row]);
+
                 } else{
                     //security doesnt exists, add the security and the amount
-                    securityWise[FundDetails[row][1]] = secAmount;
-                
+                    securityWise[FundDetails[row][1]] = [ secAmount , secAmount/portfolioAmount, checkCompFund(compFund,FundDetails[row]) ] ;
                 }
 
                 //sumarise by industry wise
                 if ( FundDetails[row][2] in industryWise ){
                     // security already exists, add the amounts
-                    industryWise[FundDetails[row][2]] += secAmount;
+                    industryWise[FundDetails[row][2]][0] += secAmount;
+                    industryWise[FundDetails[row][2]][1] += secAmount/portfolioAmount;
                 } else{
                     //security doesnt exists, add the security and the amount
-                    industryWise[FundDetails[row][2]] = secAmount;
+                    industryWise[FundDetails[row][2]] = [ secAmount, secAmount/portfolioAmount];
                 }
 
             }
-
-            // percentage
-
-
-
-            // console.log("fund Data appened with share");
-            console.log(FundDetails);
+            // console.log(FundDetails);
             console.log(securityWise);
-            console.log(industryWise);
+            
+            // check the value of overlap
+            document.getElementById("message2").innerHTML= "The overlap is " + dotProduct(securityWise) + " %" ;
 
-            var data = getSortedData(securityWise);
-
+            // plot overview graphs
+        
+            var limit = 30;
+            var data_sec = getSortedData(securityWise);  //  data_sec = [   [secuty 1, secury 2, ... ], [amt1, amt2,...],  [per1, per2,... ] ]
             var myChart_sec = new Chart("myChart_sec", {
                     type: "bar",
-                    data: {labels: data[0],
-                        datasets: [{ data:data[1]}]
+                    data: {labels: data_sec[0].slice(0, limit),
+                        datasets: [{ data:data_sec[1].slice(0, limit)}]
                     },
                     options: {}
                     });
 
-            var data = getSortedData(industryWise);
-          
+            var data_ind = getSortedData(industryWise);
             var myChart_ind = new Chart("myChart_ind", {
                     type: "bar",
-                    data: {labels: data[0],
-                        datasets: [{ data:data[1] }]
+                    data: {labels: data_ind[0].slice(0, limit),
+                        datasets: [{ data:data_ind[1].slice(0, limit) }]
                     },
                     options: {}
                     });
-            
+
+    
+
+
         }
+
+        function dotProduct(vectors){
+            
+            var dot_sum = 0;
+            var a_sum = 0;
+            var b_sum = 0;
+
+            for (row in vectors){
+                // console.log(vectors[row]);
+                var a = Number(vectors[row][1] );
+                var b = Number(vectors[row][2] );
+                dot_sum += (a*b);
+                a_sum += (a*a);
+                b_sum += (b*b);
+            }
+            // console.log(dot_sum);
+            // console.log(a_sum);
+            // console.log(Math.sqrt(dot_sum));
+            // console.log(Math.sqrt(a_sum));
+
+            var value = (100*dot_sum/(Math.sqrt(a_sum)*Math.sqrt(b_sum))) ;
+            console.log(value);
+            return  Math.round(value );
+
+
+        }
+
+        function checkCompFund(fundName,fundDetailRow){
+         
+            if(fundName == fundDetailRow[0]){
+                return (fundDetailRow[3]);
+            }else{
+                return 0;
+            }
+        }
+        
 
         function getSortedData(dict){
    
             var items = Object.keys(dict).map(function(key) {
-                  return [key, dict[key]];
+                  return [key, dict[key][0],dict[key][1]];
                 });
 
             items.sort(function(first, second) {
@@ -199,6 +245,7 @@
         }
 
         function calculate(){
+            document.getElementById("message2").innerHTML= "Calculating...." ;
             var FundSelected = [];
             // var FundData = [];
         
@@ -214,7 +261,6 @@
 
             getdata(FundSelected);
 
-            // perform dot product between the first and second fund
 
         }
 
@@ -253,15 +299,21 @@
     </form>
     </div>
 
-    <div class="spinner-border" 
-                 role="status" id="loading">
-                <span class="sr-only">Loading...</span>
-            </div>
 
 </section>
 
+<p id="message1">
+
+</p>
+<br>
+<h2 id="message2">
+
+</h2>
+
+
 <canvas id="myChart_sec" style="width:100%;max-width:700px"></canvas>
 <canvas id="myChart_ind" style="width:100%;max-width:700px"></canvas>
+
 
     
 </body>
