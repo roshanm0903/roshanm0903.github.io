@@ -355,11 +355,13 @@
             plot(securityWise,industryWise);
 
             document.getElementById("FindAllOverlapsBtn").style.display = "block";
+            document.getElementById("message2").innerHTML= "done" ;
 
             }).catch(function(err) {
             // Run this when promise was rejected via reject()
             console.log(err);
             })
+
 
             
 
@@ -451,8 +453,6 @@
                     },
                     options: {
                         indexAxis: 'y',
-                        // Elements options apply to all of the options unless overridden in a dataset
-                        // In this case, we are setting the border of each horizontal bar to be 2px wide
                         elements: {
                         bar: {
                             borderWidth: 2,
@@ -470,6 +470,8 @@
                         }
                     },
                     });
+
+            document.getElementById("message4").innerHTML= "Overlap between two funds is in percentage" ;
 
 
         }
@@ -534,15 +536,18 @@
 <p id="message1">
 </p>
 <br>
-<h2 id="message2">
-
-</h2>
+<h4 id="message2">
+</h4>
 
 <p id="message3">
 </p>
 
 <canvas id="myChart_sec" style="width:100%;max-width:700px"></canvas>
 <canvas id="myChart_ind" style="width:100%;max-width:700px"></canvas>
+
+<h5 id="message4">
+</h5>
+
 <canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>
 
 
