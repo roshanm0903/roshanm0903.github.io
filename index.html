@@ -52,11 +52,18 @@
 
 		});
     });
+        function RemoveFundRow(fundRowId){
+            document.getElementById(fundRowId).remove();
+        }
 
         function addRow(){
-            var DivString = ' <div class = "container"> <div class = "row"> <div class="form-outline mb-4"> \
-            <select id="FundInput' + id +'"';  
+            var DivString = ' <div class = "container" id="FundRow' + id +'"';  
             
+            DivString = DivString + '"> <div class = "row"> <div class="form-outline mb-4">';
+            DivString = DivString + '<select id="FundInput' + id +'">';  
+            
+            DivString = DivString + '<option value="" disabled selected>Select your fund</option>';
+
             for (fund in FundDetails){
                 DivString = DivString + "<option>";
                 // console.log(FundDetails[fund][0]);
@@ -67,9 +74,13 @@
             // check mark for making making it the comparison? 
             DivString = DivString + ' <div class="form-check form-switch"> \
                 <input class="form-check-input" type="checkbox" id="Fundselect' + id +'"> </div>';
-            // amount input
+            // remove fund
+            DivString = DivString + '<button type="button" class="close" aria-label="Close" onclick= RemoveFundRow("FundRow' +id+ '")>';
+            DivString = DivString +  '<span aria-hidden="true">&times;</span></button>';
+                // amount input
             DivString = DivString + '<div><input type="number" class="form-outline mb-4"  placeholder="Enter Amount" id="Amount' + id +'"> </div>';
             
+
 
             DivString = DivString + "</div></div>";
             $('#Funds').append(DivString); 
@@ -279,11 +290,15 @@
         
             // get the funds selected and its link in the form of an array
             for (var i=1 ; i < id ; i++){
-                var fund = document.getElementById("FundInput"+i).options[document.getElementById("FundInput"+i).selectedIndex].text;
-                var fundAmount = document.getElementById("Amount"+i).value;
-                var selected = document.getElementById("Fundselect"+i).checked;                
-                // console.log(fund);
-                FundSelected.push([fund,Number(fundAmount),selected]); 
+
+                if (document.getElementById("FundInput"+i) != null){
+                    var fund = document.getElementById("FundInput"+i).options[document.getElementById("FundInput"+i).selectedIndex].text;
+                    var fundAmount = document.getElementById("Amount"+i).value;
+                    var selected = document.getElementById("Fundselect"+i).checked;                
+                    // console.log(fund);
+                    FundSelected.push([fund,Number(fundAmount),selected]); 
+                }
+              
 
             }
 
@@ -311,6 +326,7 @@
         <br>3. Click Calculate.
         <br>
         <br>Note: You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
+        <br> If you dont find your fund, send an email to roshanm0903@gmail.com mentioning the amount.
     </h6>
 
     <section class="w-100 p-4 d-flex justify-content-center pb-4">
