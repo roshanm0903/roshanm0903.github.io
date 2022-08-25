@@ -21,7 +21,10 @@
         var id = 1;
 
         $(document).ready(function () {		
-            
+            document.getElementById("AddFundsBtn").style.display = "none";
+            document.getElementById("CalculateBtn").style.display = "none";
+            document.getElementById("message1").innerHTML= "Loading...." ;
+
         $("#FundInput").select2();
 
 			$.ajax({ 
@@ -33,8 +36,10 @@
 
            var result = data; 
 		   	console.log(result.data[1].FundName);
-			$('p').append("Loaded");
+            document.getElementById("message1").innerHTML= "Loaded" ;
 			// console.log("Printing result");
+            document.getElementById("AddFundsBtn").style.display = "block";
+            document.getElementById("CalculateBtn").style.display = "block";
 
 			for (fund in result.data){
 				// console.log(result.data[fund].FundName);
@@ -59,17 +64,22 @@
                 DivString = DivString + "</option>";
             }
             DivString = DivString + "</select></div> ";
-
-            DivString = DivString + '<div><input type="number" class="form-outline mb-4"  placeholder="Enter Amount" id="Amount' + id +'"> </div>';
             // check mark for making making it the comparison? 
             DivString = DivString + ' <div class="form-check form-switch"> \
                 <input class="form-check-input" type="checkbox" id="Fundselect' + id +'"> </div>';
+            // amount input
+            DivString = DivString + '<div><input type="number" class="form-outline mb-4"  placeholder="Enter Amount" id="Amount' + id +'"> </div>';
+            
 
             DivString = DivString + "</div></div>";
             $('#Funds').append(DivString); 
             $('#FundInput'+id).select2();
     
             id = id + 1;
+
+            $('input.form-check-input').on('change', function() {
+                     $('input.form-check-input').not(this).prop('checked', false);  
+                    });
 
             }
 
@@ -170,7 +180,16 @@
                     data: {labels: data_sec[0].slice(0, limit),
                         datasets: [{ data:data_sec[1].slice(0, limit)}]
                     },
-                    options: {}
+                    options: {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: "Stockwise Distribution"
+                                }
+                            }
+                        }
+
                     });
 
             var data_ind = getSortedData(industryWise);
@@ -179,7 +198,16 @@
                     data: {labels: data_ind[0].slice(0, limit),
                         datasets: [{ data:data_ind[1].slice(0, limit) }]
                     },
-                    options: {}
+                    options: {
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: "Industry wise Distribution"
+                                }
+                            }
+                        }
+
                     });
 
     
@@ -264,19 +292,27 @@
 
         }
 
-
-      
         </script>
 
 
 </head>
 <body>
 	
-    <h1> Analyser
+    <h1>Portfolio Analyser
     </h1>
-<p>
+    <h2>
+        Mutual fund overlap analysis and fund distribution
+    </h2>
 
-</p>
+    <h4>   Steps:</h4>
+    <h6>
+        <br>1. Replicate your portfolio by adding each fund and the invested amount.
+        <br>2. Select the fund that you would like to compare with the rest of the portfolio using the check box.
+        <br>3. Click Calculate.
+        <br>
+        <br>Note: You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
+    </h6>
+
     <section class="w-100 p-4 d-flex justify-content-center pb-4">
    
     <div>
@@ -295,7 +331,7 @@
     
     <br>
 
-    <button type="button" id="Calculate" onclick="calculate()" class="btn btn-primary btn-block mb-4">Calulate</button>
+    <button type="button" id="CalculateBtn" onclick="calculate()" class="btn btn-primary btn-block mb-4">Calulate</button>
     </form>
     </div>
 
@@ -303,7 +339,6 @@
 </section>
 
 <p id="message1">
-
 </p>
 <br>
 <h2 id="message2">
