@@ -1,5 +1,7 @@
-<html>
+<!DOCTYPE html>
+<html lang=”en” manifest="/cache.appcache">
 <head>
+    <title>Portfolio Analyzer</title>
     <meta name="viewport" content="width=device-width" />
     
 	<script type="text/javascript" 
@@ -18,13 +20,15 @@
         var FundDetails = [];
         var FundSelected = [];
         var FundData = [];
+        var FundDatatDict = {};
         var id = 1;
 
         $(document).ready(function () {		
             document.getElementById("AddFundsBtn").style.display = "none";
-            document.getElementById("CalculateBtn").style.display = "none";
+            document.getElementById("AnalyzePortfolioBtn").style.display = "none";
+            document.getElementById("FindSelectedOverlapBtn").style.display = "none";
+            document.getElementById("FindAllOverlapsBtn").style.display = "none";
             document.getElementById("message1").innerHTML= "Loading...." ;
-
         $("#FundInput").select2();
 
 			$.ajax({ 
@@ -39,7 +43,8 @@
             document.getElementById("message1").innerHTML= "Loaded" ;
 			// console.log("Printing result");
             document.getElementById("AddFundsBtn").style.display = "block";
-            document.getElementById("CalculateBtn").style.display = "block";
+            document.getElementById("AnalyzePortfolioBtn").style.display = "block";
+            document.getElementById("FindSelectedOverlapBtn").style.display = "block";
 
 			for (fund in result.data){
 				// console.log(result.data[fund].FundName);
@@ -52,6 +57,7 @@
 
 		});
     });
+        
         function RemoveFundRow(fundRowId){
             document.getElementById(fundRowId).remove();
         }
@@ -81,34 +87,29 @@
             DivString = DivString + '<div><input type="number" class="form-outline mb-4"  placeholder="Enter Amount" id="Amount' + id +'"> </div>';
             
 
-
             DivString = DivString + "</div></div>";
             $('#Funds').append(DivString); 
             $('#FundInput'+id).select2();
     
             id = id + 1;
 
+            //one one can be selected
             $('input.form-check-input').on('change', function() {
                      $('input.form-check-input').not(this).prop('checked', false);  
                     });
+            
+            //restrict to numbers
+            // $('input.number').on('input', function() {
+            //     this.value = this.value.replace(/[^0-9.]/g,'').replace(/(\..*)\./g, '$1');
+            // });
 
-            }
 
-        // search for the links of the funds selected
-        function getLink(fundName){
-            for (var i=1; i< FundDetails.length; i++){
-                if (FundDetails[i][0] == fundName){
-                    return FundDetails[i][1];
-                }
-            }
 
-        }    
+        }
+  
 
-        //// get data from the link
-
-        function getdata(Funds){
+        function getFundData(Funds) {
             var fundname_concat = [];
-            FundData = [];
 
             for (fund in Funds){
                 fundname_concat = fundname_concat + Funds[fund][0] + ", ";
@@ -116,25 +117,27 @@
             console.log(fundname_concat);
 
             console.log("Getting data from appsciprt");
-            $.ajax({ 
-                method: "get", 
-                url: "https://script.google.com/macros/s/AKfycbyIy6shJ7Mh1Zxlo3ERwMatVcXIEmNvvbn7smzQ6l0ki4cSQg62hfJicZUaduV-MgFF/exec",
-                data: {
-                fundName : fundname_concat
-            }
 
-            }).done(function( data ) {     
-                var result = data["data"]; 
-                generatePorfolio(Funds,result);
-                 })
-                
-      
+            return new Promise(function(resolve, reject) {
+                $.ajax({
+                method: "get",
+                url: "https://script.google.com/macros/s/AKfycbyIy6shJ7Mh1Zxlo3ERwMatVcXIEmNvvbn7smzQ6l0ki4cSQg62hfJicZUaduV-MgFF/exec",
+                data: { fundName : fundname_concat },
+                success: function(data) {
+                    resolve(data["data"]); // Resolve promise and go to then()
+                },
+                error: function(err) {
+                    reject(err); // Reject the promise and go to catch()
+                }
+                });
+            });
         }
 
-        function generatePorfolio(Funds, FundDetails){
+        function generatePorfolio(Funds, Data){
+
+            var FundData = Data;
 
             // get share of fund for each stock.
-
             var securityWise = {};
             var industryWise = {};
 
@@ -145,42 +148,49 @@
             // get the single fund name which is to be compared with the portfolio
             var compFund = UserFunds[0][ UserFunds[2].indexOf(true)]; 
             
+            // console.log("portfolio Amount "+portfolioAmount );
+            console.log("comp fund "+compFund );
+            console.log(FundData);
+           
             document.getElementById("message1").innerHTML = "Comparing the selected fund, " + compFund + ", with rest of the Portfolio";
 
-            for (row in FundDetails){
+            for (row in FundData){
                 // multiply the security fractional ammount with the fund amount
-                var Amount = UserFunds[1][ UserFunds[0].indexOf(FundDetails[row][0])];
-                var secAmount = (FundDetails[row][3]*Amount);
-                FundDetails[row].push(secAmount );
+                var Amount = UserFunds[1][ UserFunds[0].indexOf(FundData[row][0])];
+                var secAmount = (FundData[row][3]*Amount);
+                FundData[row].push(secAmount );
 
                 //sumarise by security wise
-                if ( FundDetails[row][1] in securityWise ){     // { "security name 1" : [ amount , portfolio_percentage, compfund_shareholding], "security name w" : [ amount , portfolio_percentage, compfund_shareholding],...  }
+                if ( FundData[row][1] in securityWise ){     // { "security name 1" : [ amount , portfolio_percentage, compfund_shareholding], "security name w" : [ amount , portfolio_percentage, compfund_shareholding],...  }
                     // security already exists, add the amounts
-                    securityWise[FundDetails[row][1]][0] += secAmount; // amount
-                    securityWise[FundDetails[row][1]][1] += (secAmount/portfolioAmount); // as percentage
-                    securityWise[FundDetails[row][1]][2] = checkCompFund(compFund,FundDetails[row]);
+                    securityWise[FundData[row][1]][0] += secAmount; // amount
+                    securityWise[FundData[row][1]][1] += (secAmount/portfolioAmount); // as percentage
+                    securityWise[FundData[row][1]][2] = checkCompFund(compFund,FundData[row]);
 
                 } else{
                     //security doesnt exists, add the security and the amount
-                    securityWise[FundDetails[row][1]] = [ secAmount , secAmount/portfolioAmount, checkCompFund(compFund,FundDetails[row]) ] ;
+                    securityWise[FundData[row][1]] = [ secAmount , secAmount/portfolioAmount, checkCompFund(compFund,FundData[row]) ] ;
                 }
 
                 //sumarise by industry wise
-                if ( FundDetails[row][2] in industryWise ){
+                if ( FundData[row][2] in industryWise ){
                     // security already exists, add the amounts
-                    industryWise[FundDetails[row][2]][0] += secAmount;
-                    industryWise[FundDetails[row][2]][1] += secAmount/portfolioAmount;
+                    industryWise[FundData[row][2]][0] += secAmount;
+                    industryWise[FundData[row][2]][1] += secAmount/portfolioAmount;
                 } else{
                     //security doesnt exists, add the security and the amount
-                    industryWise[FundDetails[row][2]] = [ secAmount, secAmount/portfolioAmount];
+                    industryWise[FundData[row][2]] = [ secAmount, secAmount/portfolioAmount];
                 }
 
             }
-            // console.log(FundDetails);
+            // console.log(FundData);
             console.log(securityWise);
-            
-            // check the value of overlap
-            document.getElementById("message2").innerHTML= "The overlap is " + dotProduct(securityWise) + " %" ;
+
+            return [securityWise,industryWise];
+
+        }
+
+        function plot(securityWise,industryWise){
 
             // plot overview graphs
         
@@ -240,10 +250,6 @@
                 a_sum += (a*a);
                 b_sum += (b*b);
             }
-            // console.log(dot_sum);
-            // console.log(a_sum);
-            // console.log(Math.sqrt(dot_sum));
-            // console.log(Math.sqrt(a_sum));
 
             var value = (100*dot_sum/(Math.sqrt(a_sum)*Math.sqrt(b_sum))) ;
             console.log(value);
@@ -261,7 +267,6 @@
             }
         }
         
-
         function getSortedData(dict){
    
             var items = Object.keys(dict).map(function(key) {
@@ -278,17 +283,26 @@
 
         }
 
+        function getSortedOverlapData(a,b){
+            if (a[2] === b[2]) {
+                return 0;
+            }
+            else {
+                return (a[2] > b[2]) ? -1 : 1;
+            }
+            
+        }
+
         function transpose(arr){
             var arr_t = arr[0].map((_, colIndex) => arr.map(row => row[colIndex])); // transpose
             return arr_t
         }
 
-        function calculate(){
+        function get_Funds(){
             document.getElementById("message2").innerHTML= "Calculating...." ;
             var FundSelected = [];
-            // var FundData = [];
         
-            // get the funds selected and its link in the form of an array
+            // get the funds selected in the form of an array
             for (var i=1 ; i < id ; i++){
 
                 if (document.getElementById("FundInput"+i) != null){
@@ -301,12 +315,164 @@
               
 
             }
-
-            getdata(FundSelected);
+            return FundSelected;
+            // getdata(FundSelected);
 
 
         }
 
+        function getCombinations(Funds){
+            var array =  transpose(Funds)[0];
+            var results = [];
+
+                for (var i = 0; i < array.length - 1; i++) {
+                    for (var j = i + 1; j < array.length; j++) {
+                        results.push([array[i],array[j]]);
+                    }
+                }
+        
+            return results;
+
+            }
+
+
+        function AnalyzePortfolio(){
+            var FundsSelected  = get_Funds();
+            var FundData = [];
+            
+            getFundData(FundsSelected).then(function(data) {
+            // Run this when your request was successful
+            FundDatatDict = data;       
+                for (fund in data){
+                    for (sec in data[fund]){
+                        FundData.push( [fund, data[fund][sec][0], data[fund][sec][1] , data[fund][sec][2]]);    
+                    }
+                }
+            var [ securityWise, industryWise] = generatePorfolio(FundsSelected, FundData);
+
+            console.log(securityWise);
+            console.log(industryWise);
+            plot(securityWise,industryWise);
+
+            document.getElementById("FindAllOverlapsBtn").style.display = "block";
+
+            }).catch(function(err) {
+            // Run this when promise was rejected via reject()
+            console.log(err);
+            })
+
+            
+
+        }
+
+        function FindSelectedOverlap(){
+            var FundsSelected  = get_Funds();
+            var FundData = [];
+            
+            getFundData(FundsSelected).then(function(data) {
+            // Run this when your request was successful
+            FundDatatDict = data;       
+                for (fund in data){
+                    for (sec in data[fund]){
+                        FundData.push( [fund, data[fund][sec][0], data[fund][sec][1] , data[fund][sec][2]]);    
+                    }
+                }
+            var [ securityWise, industryWise] = generatePorfolio(FundsSelected, FundData);
+
+            // check the value of overlap
+            document.getElementById("message2").innerHTML= "The overlap is " + dotProduct(securityWise) + " %" ;
+
+            console.log(securityWise);
+            console.log(industryWise);
+        
+
+
+
+            }).catch(function(err) {
+            // Run this when promise was rejected via reject()
+            console.log(err);
+            })
+
+        }
+
+        function FindAllOverlaps(){
+            var FundsSelected  = get_Funds();
+
+            console.log(FundDatatDict);
+   
+            var combinations = getCombinations(FundsSelected)
+
+            console.log(combinations);
+
+            for (combi in combinations){
+
+                var sec1 = FundDatatDict[combinations[combi][0]];
+                var sec2 = FundDatatDict[combinations[combi][1]];
+
+                var vectors = {};
+                for ( sec in sec1){
+                    vectors[sec1[sec][0]] = [sec1[sec][2], 0 ];
+                }
+                for (sec in sec2){
+                    if (sec2[sec][0] in vectors){
+                        vectors[sec2[sec][0]][1] = sec2[sec][2];
+                    }else{
+                        vectors[sec2[sec][0]] = [ 0, sec2[sec][2]];
+                    }
+                }
+
+                var vector_arr =[];
+
+                for (sec in vectors){
+                    vector_arr.push( [ sec, vectors[sec][0],vectors[sec][1]]);    
+                    }
+
+                combinations[combi].push(dotProduct(vector_arr));
+                combinations[combi].push( combinations[combi][0] + " & " +  combinations[combi][1]  );
+
+                // console.log(vector_arr);
+
+                // $("#message3").append(combinations[combi][0] + ", " + combinations[combi][1]+ "<br>");
+                // $("#message3").append(dotProduct(vector_arr) +" %"+ "<br>");
+
+            }
+            // sort based on percentage
+
+            combinations = combinations.sort(getSortedOverlapData);
+
+            console.log(combinations);
+            combinations = transpose(combinations);
+
+            // plot
+            const config = new Chart("myChart_overlap",{
+                    type: 'horizontalBar',
+                    data: {labels: combinations[3],
+                        datasets: [{ data:combinations[2]}]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        // Elements options apply to all of the options unless overridden in a dataset
+                        // In this case, we are setting the border of each horizontal bar to be 2px wide
+                        elements: {
+                        bar: {
+                            borderWidth: 2,
+                        }
+                        },
+                        responsive: true,
+                        plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Chart.js Horizontal Bar Chart'
+                        }
+                        }
+                    },
+                    });
+
+
+        }
         </script>
 
 
@@ -321,12 +487,18 @@
 
     <h4>   Steps:</h4>
     <h6>
-        <br>1. Replicate your portfolio by adding each fund and the invested amount.
-        <br>2. Select the fund that you would like to compare with the rest of the portfolio using the check box.
-        <br>3. Click Calculate.
+        <br>Add each fund in your portfolio along with the invested amount.
         <br>
-        <br>Note: You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
-        <br> If you dont find your fund, send an email to roshanm0903@gmail.com mentioning the amount.
+        <h5>Options Available</h5>
+        
+        <br>1. To view distribution of your portfolio by stocks and by industry, click "Analyze Portfolio".
+        <br>2. To check the Overlap of a certain fund with the portfolio, select the fund using the checkbox next to it and click "Find Overlap with Selected"
+        <br>3. To check for the Overlap between all pair wise combinations of the funds in your portfolio, click on "Find all Overlaps"
+        <br>
+        <br>Note: 
+        <br>You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
+        <br>Option 3 is enabled only after "Analyze Portfolio"
+        <br>If you dont find your fund, send an email to roshanm0903@gmail.com mentioning the fundname.
     </h6>
 
     <section class="w-100 p-4 d-flex justify-content-center pb-4">
@@ -346,11 +518,16 @@
     </div>
     
     <br>
+    <br>
+    <button type="button" id="AnalyzePortfolioBtn" onclick="AnalyzePortfolio()" class="btn btn-primary btn-block mb-4">Analyze Portfolio</button>
 
-    <button type="button" id="CalculateBtn" onclick="calculate()" class="btn btn-primary btn-block mb-4">Calulate</button>
+    <button type="button" id="FindSelectedOverlapBtn" onclick="FindSelectedOverlap()" class="btn btn-primary btn-block mb-4">Find overlap with selected</button>
+
+    <button type="button" id="FindAllOverlapsBtn" onclick="FindAllOverlaps()" class="btn btn-primary btn-block mb-4">Find all overlaps</button>
+    
     </form>
     </div>
-
+    
 
 </section>
 
@@ -361,11 +538,13 @@
 
 </h2>
 
+<p id="message3">
+</p>
 
 <canvas id="myChart_sec" style="width:100%;max-width:700px"></canvas>
 <canvas id="myChart_ind" style="width:100%;max-width:700px"></canvas>
+<canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>
 
 
-    
 </body>
 </html>
