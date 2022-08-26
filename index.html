@@ -43,8 +43,6 @@
             document.getElementById("message1").innerHTML= "Loaded" ;
 			// console.log("Printing result");
             document.getElementById("AddFundsBtn").style.display = "block";
-            document.getElementById("AnalyzePortfolioBtn").style.display = "block";
-            document.getElementById("FindSelectedOverlapBtn").style.display = "block";
 
 			for (fund in result.data){
 				// console.log(result.data[fund].FundName);
@@ -104,6 +102,8 @@
             // });
 
 
+            document.getElementById("AnalyzePortfolioBtn").style.display = "block";
+            document.getElementById("FindSelectedOverlapBtn").style.display = "block";
 
         }
   
