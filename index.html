@@ -61,33 +61,41 @@
         }
 
         function addRow(){
-            var DivString = ' <div class = "container" id="FundRow' + id +'"';  
-            
-            DivString = DivString + '"> <div class = "row"> <div class="form-outline mb-4">';
-            DivString = DivString + '<select id="FundInput' + id +'">';  
-            
-            DivString = DivString + '<option value="" disabled selected>Select your fund</option>';
 
-            for (fund in FundDetails){
-                DivString = DivString + "<option>";
-                // console.log(FundDetails[fund][0]);
-                DivString = DivString + FundDetails[fund][0];
-                DivString = DivString + "</option>";
-            }
-            DivString = DivString + "</select></div> ";
-            // check mark for making making it the comparison? 
-            DivString = DivString + ' <div class="form-check form-switch"> \
-                <input class="form-check-input" type="checkbox" id="Fundselect' + id +'"> </div>';
-            // remove fund
-            DivString = DivString + '<button type="button" class="close" aria-label="Close" onclick= RemoveFundRow("FundRow' +id+ '")>';
-            DivString = DivString +  '<span aria-hidden="true">&times;</span></button>';
-                // amount input
-            DivString = DivString + '<div><input type="number" class="form-outline mb-4"  placeholder="Enter Amount" id="Amount' + id +'"> </div>';
+            var DivString = '<div >\
+                                <div class="row" id="FundRow' + id +'">\
+                                    <div class="col-1">\
+                                            <input type="checkbox" id="Fundselect' + id +'">\
+                                    </div>\
+                                    <div class="col-8">\
+                                        <select class="js-example-responsive" style="width: 100%" id="FundInput' + id +'">\
+                                            <option value="" disabled selected>Select your fund</option>';
+                                                for (fund in FundDetails){
+                                                    DivString += '<option>' + FundDetails[fund][0] + '</option>';
+                                                }
+                                            
+            DivString +=                '</select>\
+                                    </div>\
+                                    <div class="col-2">\
+                                        <input type="number" style="width:100%" placeholder="Enter Amount" id="Amount' + id +'">\
+                                    </div>\
+                                    <div class="col-1">\
+                                        <button type="button" class="close"  style="padding: 0px 0px 0px 0px"  onclick= RemoveFundRow("FundRow' +id+ '")>\
+                                            <span aria-hidden="true">&times;</span>\
+                                        </button>\
+                                    </div>\
+                                </div>\
+                            </div><br>';            
+        
+
             
 
-            DivString = DivString + "</div></div>";
+            // DivString = DivString + "</div></div>";
             $('#Funds').append(DivString); 
-            $('#FundInput'+id).select2();
+            $('#FundInput'+id).select2({
+                // width: 'resolve'
+            }
+            );
     
             id = id + 1;
 
@@ -370,7 +378,8 @@
         function FindSelectedOverlap(){
             var FundsSelected  = get_Funds();
             var FundData = [];
-            
+            console.log("Here");
+            console.log(FundsSelected);
             getFundData(FundsSelected).then(function(data) {
             // Run this when your request was successful
             FundDatatDict = data;       
@@ -472,6 +481,8 @@
                     });
 
             document.getElementById("message4").innerHTML= "Overlap between two funds is in percentage" ;
+            document.getElementById("message2").innerHTML= "Done, Scoll down to view the overlap" ;
+     
 
 
         }
@@ -479,77 +490,95 @@
 
 
 </head>
+
+<style>
+
+</style>
+
 <body>
-	
+	<!-- <div class="container"> -->
     <h1>Portfolio Analyser
     </h1>
-    <h2>
-        Mutual fund overlap analysis and fund distribution
-    </h2>
-
-    <h4>   Steps:</h4>
-    <h6>
-        <br>Add each fund in your portfolio along with the invested amount.
-        <br>
-        <h5>Options Available</h5>
-        
-        <br>1. To view distribution of your portfolio by stocks and by industry, click "Analyze Portfolio".
-        <br>2. To check the Overlap of a certain fund with the portfolio, select the fund using the checkbox next to it and click "Find Overlap with Selected"
-        <br>3. To check for the Overlap between all pair wise combinations of the funds in your portfolio, click on "Find all Overlaps"
-        <br>
-        <br>Note: 
-        <br>No PPI data is collected. All calculations happen locally on your browser.
-        <br>You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
-        <br>Option 3 is enabled only after "Analyze Portfolio"
-        <br>If you dont find your fund, send an email to roshanm0903@gmail.com mentioning the fundname.
-    </h6>
-
-    <section class="w-100 p-4 d-flex justify-content-center pb-4">
-   
-    <div>
-
-    
-    <form style="width: 50rem;">
-        <div>
-        </div>
-
-    <div id='Funds'>
-    </div>
     
     <div class="row">
-    <button type="button" id="AddFundsBtn" onclick="addRow()" class="btn btn-primary btn-block mb-4">Add Fund</button>
+        <div class="col-1">
+
+        </div>
+        <div class="col-4">
+            <h4>
+                Mutual fund distribution across stocks & industry and overlap analysis<br>
+            </h4>
+        
+            <!-- <section class="w-100 p-4 d-flex justify-content-center pb-4"> -->
+                <div>
+                    <!-- <form style="width: 30rem;"></form> -->
+        
+                    <div id='Funds'></div>
+
+                    
+                    <div class="row">
+                    <button type="button" id="AddFundsBtn" onclick="addRow()" class="btn btn-primary btn-block mb-4">Add Fund</button>
+                    </div>
+                    
+                    <br>
+                    <br>
+                    <button type="button" id="AnalyzePortfolioBtn" onclick="AnalyzePortfolio()" class="btn btn-primary btn-block mb-4">Analyze Portfolio</button>
+                    <button type="button" id="FindSelectedOverlapBtn" onclick="FindSelectedOverlap()" class="btn btn-primary btn-block mb-4">Find overlap with selected</button>
+                    <button type="button" id="FindAllOverlapsBtn" onclick="FindAllOverlaps()" class="btn btn-primary btn-block mb-4">Find all overlaps</button>
+                    
+                    <!-- </form> -->
+                </div>
+            <!-- </section>   -->
+
+            <h4>   Steps:</h4>
+            <p>
+                Add each fund in your portfolio along with the invested amount.
+                <br>
+                <h5>Options Available</h5>
+                
+                    1. To view distribution of your portfolio by stocks and by industry, click "Analyze Portfolio".
+                <br>2. To check the Overlap of a certain fund with the portfolio, select the fund using the checkbox next to it and click "Find Overlap with Selected"
+                <br>3. To check for the Overlap between all pair wise combinations of the funds in your portfolio, click on "Find all Overlaps"
+                <br>
+                <br>Note: 
+                <br>No PPI data is collected. All calculations happen locally on your browser.
+                <br>You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
+                <br>Option 3 is enabled only after "Analyze Portfolio"
+                <br>If you dont find your fund, send an email to roshanm0903@gmail.com mentioning the fundname.
+            </p>
+
+        </div>
+        <div class="col-6">
+            <div class="container">
+            <canvas id="myChart_sec" style="width:100%;"></canvas>
+            <canvas id="myChart_ind" style="width:100%;"></canvas>
+            <canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>
+            </div>
+
+            <p id="message1">
+            </p>
+            <br>
+            <h4 id="message2">
+            </h4>
+            
+            <p id="message3">
+            </p>
+                        
+            <h5 id="message4">
+            </h5>
+            
+        </div>
+        <div class="col-1">
+
+        </div>
+    
     </div>
-    
-    <br>
-    <br>
-    <button type="button" id="AnalyzePortfolioBtn" onclick="AnalyzePortfolio()" class="btn btn-primary btn-block mb-4">Analyze Portfolio</button>
 
-    <button type="button" id="FindSelectedOverlapBtn" onclick="FindSelectedOverlap()" class="btn btn-primary btn-block mb-4">Find overlap with selected</button>
+<!-- </div> -->
 
-    <button type="button" id="FindAllOverlapsBtn" onclick="FindAllOverlaps()" class="btn btn-primary btn-block mb-4">Find all overlaps</button>
-    
-    </form>
-    </div>
-    
 
-</section>
 
-<p id="message1">
-</p>
-<br>
-<h4 id="message2">
-</h4>
 
-<p id="message3">
-</p>
-
-<canvas id="myChart_sec" style="width:100%;max-width:700px"></canvas>
-<canvas id="myChart_ind" style="width:100%;max-width:700px"></canvas>
-
-<h5 id="message4">
-</h5>
-
-<canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>
 
 <h7>Data sourced from moneycontrol.com</h7>
 </body>
