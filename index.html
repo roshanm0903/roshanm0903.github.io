@@ -65,7 +65,7 @@
             var DivString = '<div >\
                                 <div class="row" id="FundRow' + id +'">\
                                     <div class="col-1">\
-                                            <input type="checkbox" id="Fundselect' + id +'">\
+                                            <input type="checkbox" class="check-input" id="Fundselect' + id +'">\
                                     </div>\
                                     <div class="col-8">\
                                         <select class="js-example-responsive" style="width: 100%" id="FundInput' + id +'">\
@@ -97,11 +97,10 @@
             }
             );
     
-            id = id + 1;
-
+    
             //one one can be selected
-            $('input.form-check-input').on('change', function() {
-                     $('input.form-check-input').not(this).prop('checked', false);  
+            $('input.check-input').on('change', function() {
+                     $('input.check-input').not(this).prop('checked', false);  
                     });
             
             //restrict to numbers
@@ -111,7 +110,12 @@
 
 
             document.getElementById("AnalyzePortfolioBtn").style.display = "block";
+            
+            if (id>1){
             document.getElementById("FindSelectedOverlapBtn").style.display = "block";
+                document.getElementById("FindAllOverlapsBtn").style.display = "block";
+            }
+            id = id + 1;
 
         }
   
@@ -199,6 +203,8 @@
         }
 
         function plot(securityWise,industryWise){
+            document.getElementById("plots").innerHTML = ' <canvas id="myChart_sec" style="width:100%;"></canvas> \
+                    <canvas id="myChart_ind" style="width:100%;"></canvas>';
 
             // plot overview graphs
         
@@ -307,7 +313,9 @@
         }
 
         function get_Funds(){
-            document.getElementById("message2").innerHTML= "Calculating...." ;
+            document.getElementById("message2").innerHTML= '<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">\
+                                                                <span class="sr-only">Loading...</span>\
+                                                            </div>';
             var FundSelected = [];
         
             // get the funds selected in the form of an array
@@ -345,6 +353,7 @@
 
 
         function AnalyzePortfolio(){
+            document.getElementById("plots").innerHTML =" "; // clear canvas
             var FundsSelected  = get_Funds();
             var FundData = [];
             
@@ -362,8 +371,7 @@
             console.log(industryWise);
             plot(securityWise,industryWise);
 
-            document.getElementById("FindAllOverlapsBtn").style.display = "block";
-            document.getElementById("message2").innerHTML= "done" ;
+            document.getElementById("message2").innerHTML= " " ;
 
             }).catch(function(err) {
             // Run this when promise was rejected via reject()
@@ -376,6 +384,8 @@
         }
 
         function FindSelectedOverlap(){
+            document.getElementById("plots").innerHTML =" ";
+
             var FundsSelected  = get_Funds();
             var FundData = [];
             console.log("Here");
@@ -395,9 +405,6 @@
 
             console.log(securityWise);
             console.log(industryWise);
-        
-
-
 
             }).catch(function(err) {
             // Run this when promise was rejected via reject()
@@ -407,82 +414,97 @@
         }
 
         function FindAllOverlaps(){
+            document.getElementById("plots").innerHTML =" ";
+
             var FundsSelected  = get_Funds();
-
-            console.log(FundDatatDict);
-   
-            var combinations = getCombinations(FundsSelected)
-
+            var FundData = [];
+            console.log("Here");
+            console.log(FundsSelected);
+            var combinations = getCombinations(FundsSelected);
             console.log(combinations);
+            
+            getFundData(FundsSelected).then(function(data) {
+            // Run this when your request was successful
+            FundDatatDict = data; 
 
             for (combi in combinations){
 
-                var sec1 = FundDatatDict[combinations[combi][0]];
-                var sec2 = FundDatatDict[combinations[combi][1]];
+                    var sec1 = FundDatatDict[combinations[combi][0]];
+                    var sec2 = FundDatatDict[combinations[combi][1]];
 
-                var vectors = {};
-                for ( sec in sec1){
-                    vectors[sec1[sec][0]] = [sec1[sec][2], 0 ];
-                }
-                for (sec in sec2){
-                    if (sec2[sec][0] in vectors){
-                        vectors[sec2[sec][0]][1] = sec2[sec][2];
-                    }else{
-                        vectors[sec2[sec][0]] = [ 0, sec2[sec][2]];
+                    var vectors = {};
+                    for ( sec in sec1){
+                        vectors[sec1[sec][0]] = [sec1[sec][2], 0 ];
                     }
-                }
-
-                var vector_arr =[];
-
-                for (sec in vectors){
-                    vector_arr.push( [ sec, vectors[sec][0],vectors[sec][1]]);    
+                    for (sec in sec2){
+                        if (sec2[sec][0] in vectors){
+                            vectors[sec2[sec][0]][1] = sec2[sec][2];
+                        }else{
+                            vectors[sec2[sec][0]] = [ 0, sec2[sec][2]];
+                        }
                     }
 
-                combinations[combi].push(dotProduct(vector_arr));
-                combinations[combi].push( combinations[combi][0] + " & " +  combinations[combi][1]  );
+                    var vector_arr =[];
 
-                // console.log(vector_arr);
-
-                // $("#message3").append(combinations[combi][0] + ", " + combinations[combi][1]+ "<br>");
-                // $("#message3").append(dotProduct(vector_arr) +" %"+ "<br>");
-
-            }
-            // sort based on percentage
-
-            combinations = combinations.sort(getSortedOverlapData);
-
-            console.log(combinations);
-            combinations = transpose(combinations);
-
-            // plot
-            const config = new Chart("myChart_overlap",{
-                    type: 'horizontalBar',
-                    data: {labels: combinations[3],
-                        datasets: [{ data:combinations[2]}]
-                    },
-                    options: {
-                        indexAxis: 'y',
-                        elements: {
-                        bar: {
-                            borderWidth: 2,
+                    for (sec in vectors){
+                        vector_arr.push( [ sec, vectors[sec][0],vectors[sec][1]]);    
                         }
+
+                    combinations[combi].push(dotProduct(vector_arr));
+                    combinations[combi].push( combinations[combi][0] + " & " +  combinations[combi][1]  );
+
+                    // console.log(vector_arr);
+
+                    // $("#message3").append(combinations[combi][0] + ", " + combinations[combi][1]+ "<br>");
+                    // $("#message3").append(dotProduct(vector_arr) +" %"+ "<br>");
+
+                    }
+                    // sort based on percentage
+
+                    combinations = combinations.sort(getSortedOverlapData);
+
+                    console.log(combinations);
+                    combinations = transpose(combinations);
+
+                    document.getElementById("plots").innerHTML = '<canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>';
+
+                    // plot
+                    const config = new Chart("myChart_overlap",{
+                        type: 'horizontalBar',
+                        data: {labels: combinations[3],
+                            datasets: [{ data:combinations[2]}]
                         },
-                        responsive: true,
-                        plugins: {
-                        legend: {
-                            position: 'right',
+                        options: {
+                            indexAxis: 'y',
+                            elements: {
+                            bar: {
+                                borderWidth: 2,
+                            }
+                            },
+                            responsive: true,
+                            plugins: {
+                            legend: {
+                                position: 'right',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Chart.js Horizontal Bar Chart'
+                            }
+                            }
                         },
-                        title: {
-                            display: true,
-                            text: 'Chart.js Horizontal Bar Chart'
-                        }
-                        }
-                    },
-                    });
+                        });
 
-            document.getElementById("message4").innerHTML= "Overlap between two funds is in percentage" ;
-            document.getElementById("message2").innerHTML= "Done, Scoll down to view the overlap" ;
-     
+                    document.getElementById("message2").innerHTML= "Done. Overlap between two funds is in percentage" ;
+                    // document.getElementById("message2").innerHTML= "" ;
+
+
+
+
+
+            }).catch(function(err) {
+            // Run this when promise was rejected via reject()
+            console.log(err);
+            })
 
 
         }
@@ -550,17 +572,18 @@
         </div>
         <div class="col-6">
             <div class="container">
-            <canvas id="myChart_sec" style="width:100%;"></canvas>
-            <canvas id="myChart_ind" style="width:100%;"></canvas>
-            <canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>
+                <h4 id="message2">
+                </h4>
+                <div id="plots">
+                    <canvas id="myChart_sec" style="width:100%;"></canvas>
+                    <canvas id="myChart_ind" style="width:100%;"></canvas>
+                    <canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>
+                </div>
             </div>
 
             <p id="message1">
             </p>
             <br>
-            <h4 id="message2">
-            </h4>
-            
             <p id="message3">
             </p>
                         
