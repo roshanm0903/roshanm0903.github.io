@@ -28,7 +28,9 @@
             document.getElementById("AnalyzePortfolioBtn").style.display = "none";
             document.getElementById("FindSelectedOverlapBtn").style.display = "none";
             document.getElementById("FindAllOverlapsBtn").style.display = "none";
-            document.getElementById("message1").innerHTML= "Loading...." ;
+            document.getElementById("message2").innerHTML= '<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">\
+                                                                <span class="sr-only">Loading...</span>\
+                                                            </div>';
         $("#FundInput").select2();
 
 			$.ajax({ 
@@ -40,7 +42,7 @@
 
            var result = data; 
 		   	console.log(result.data[1].FundName);
-            document.getElementById("message1").innerHTML= "Loaded" ;
+            document.getElementById("message2").innerHTML= "Loaded" ;
 			// console.log("Printing result");
             document.getElementById("AddFundsBtn").style.display = "block";
 
@@ -162,8 +164,6 @@
             // console.log("portfolio Amount "+portfolioAmount );
             console.log("comp fund "+compFund );
             console.log(FundData);
-           
-            document.getElementById("message1").innerHTML = "Comparing the selected fund, " + compFund + ", with rest of the Portfolio";
 
             for (row in FundData){
                 // multiply the security fractional ammount with the fund amount
@@ -197,7 +197,7 @@
             // console.log(FundData);
             console.log(securityWise);
 
-            return [securityWise,industryWise];
+            return [securityWise,industryWise,compFund];
 
         }
 
@@ -212,14 +212,15 @@
             var myChart_sec = new Chart("myChart_sec", {
                     type: "bar",
                     data: {labels: data_sec[0].slice(0, limit),
-                        datasets: [{ data:data_sec[1].slice(0, limit)}]
+                        datasets: [{ label: 'Stockwise Distribution',
+                                    data:data_sec[1].slice(0, limit)}]
                     },
                     options: {
                             responsive: true,
                             plugins: {
                                 title: {
                                     display: true,
-                                    text: "Stockwise Distribution"
+                                    text: "Stock wise Distribution"
                                 }
                             }
                         }
@@ -230,7 +231,7 @@
             var myChart_ind = new Chart("myChart_ind", {
                     type: "bar",
                     data: {labels: data_ind[0].slice(0, limit),
-                        datasets: [{ data:data_ind[1].slice(0, limit) }]
+                        datasets: [{ label: 'Industrywise Distribution', data:data_ind[1].slice(0, limit) }]
                     },
                     options: {
                             responsive: true,
@@ -249,6 +250,55 @@
 
         }
 
+        function plotSecuritesOverlap(securityWise){
+            document.getElementById("plots").innerHTML = ' <canvas id="myChart_sec_ovelap" width=100%  height=1000"></canvas>';
+
+            // plot overview graphs
+            var vectors = getSortedCommonSecurity(securityWise);
+            vectors = transpose(vectors);
+            console.log("printing final vectors");
+            console.log(vectors);
+
+            var limit = 50;
+            const config = new Chart("myChart_sec_ovelap",{
+                        type: 'horizontalBar',
+                        data: {labels: vectors[0],
+                            datasets: [
+                                { label:"Holding in Portfolio", 
+                                   data:vectors[2],
+                                   backgroundColor:  "#ff9999"
+                                },
+                                { label:"Holding in Selected Fund", 
+                                   data:vectors[3],
+                                   backgroundColor:"#99c2ff"
+                                }
+                                
+                        ]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            elements: {
+                            bar: {
+                                borderWidth: 2,
+                            }
+                            },
+                            responsive: true,
+                            plugins: {
+                            legend: {
+                                position: 'right',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Chart.js Horizontal Bar Chart'
+                            }
+                            }
+                        },
+                        });
+    
+
+
+        }
+
         function dotProduct(vectors){
             
             var dot_sum = 0;
@@ -256,9 +306,9 @@
             var b_sum = 0;
 
             for (row in vectors){
-                // console.log(vectors[row]);
                 var a = Number(vectors[row][1] );
                 var b = Number(vectors[row][2] );
+                vectors[row][3] = a*b; //a.b
                 dot_sum += (a*b);
                 a_sum += (a*a);
                 b_sum += (b*b);
@@ -266,7 +316,13 @@
 
             var value = (100*dot_sum/(Math.sqrt(a_sum)*Math.sqrt(b_sum))) ;
             console.log(value);
-            return  Math.round(value );
+            console.log("vectors");
+            console.log(vectors);
+
+            //sort the vector on column 4
+            // vectors = getSortedCommonSecurity(vectors);
+
+            return  [Math.round(value ), vectors ];
 
 
         }
@@ -277,6 +333,7 @@
                 return (fundDetailRow[3]);
             }else{
                 return 0;
+
             }
         }
         
@@ -303,6 +360,19 @@
             else {
                 return (a[2] > b[2]) ? -1 : 1;
             }
+            
+        }
+
+        function getSortedCommonSecurity(dict){
+            var items = Object.keys(dict).map(function(key) {
+                  return [key, dict[key][0],dict[key][1],dict[key][2]];
+                });
+
+            items.sort(function(first, second) {
+                return second[3] - first[3];
+            });
+            
+            return items;
             
         }
 
@@ -351,6 +421,7 @@
             }
 
 
+
         function AnalyzePortfolio(){
             document.getElementById("plots").innerHTML =" "; // clear canvas
             var FundsSelected  = get_Funds();
@@ -397,13 +468,21 @@
                         FundData.push( [fund, data[fund][sec][0], data[fund][sec][1] , data[fund][sec][2]]);    
                     }
                 }
-            var [ securityWise, industryWise] = generatePorfolio(FundsSelected, FundData);
+            var [ securityWise, industryWise, compFund] = generatePorfolio(FundsSelected, FundData);
 
             // check the value of overlap
-            document.getElementById("message2").innerHTML= "The overlap is " + dotProduct(securityWise) + " %" ;
+            document.getElementById("message1").innerHTML = "Comparing the selected fund, " + compFund + ", with the entire Portfolio";
+            
+            var [overlapVlaue , securityWise] = dotProduct(securityWise);
+            document.getElementById("message2").innerHTML= "The overlap is " + overlapVlaue + " %" ;
 
-            console.log(securityWise);
-            console.log(industryWise);
+            // console.log(securityWise);
+            // console.log(industryWise);
+
+            // display the top securities that are overlapping
+             // securityWise = [security, sec_portoflio %, sec_selected %, sec_portfolio*sec_selected] sort by column3  
+            plotSecuritesOverlap(securityWise);
+
 
             }).catch(function(err) {
             // Run this when promise was rejected via reject()
@@ -452,17 +531,13 @@
                     combinations[combi].push(dotProduct(vector_arr));
                     combinations[combi].push( combinations[combi][0] + " & " +  combinations[combi][1]  );
 
-                    // console.log(vector_arr);
-
-                    // $("#message3").append(combinations[combi][0] + ", " + combinations[combi][1]+ "<br>");
-                    // $("#message3").append(dotProduct(vector_arr) +" %"+ "<br>");
 
                     }
                     // sort based on percentage
 
                     combinations = combinations.sort(getSortedOverlapData);
 
-                    console.log(combinations);
+                    // console.log(combinations);
                     combinations = transpose(combinations);
 
                     document.getElementById("plots").innerHTML = '<canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>';
@@ -471,7 +546,7 @@
                     const config = new Chart("myChart_overlap",{
                         type: 'horizontalBar',
                         data: {labels: combinations[3],
-                            datasets: [{ data:combinations[2]}]
+                            datasets: [{ label:"Pair wise overlap", data:combinations[2]}]
                         },
                         options: {
                             indexAxis: 'y',
@@ -562,10 +637,9 @@
                 <br>3. To check for the Overlap between all pair wise combinations of the funds in your portfolio, click on "Find all Overlaps"
                 <br>
                 <br>Note: 
-                <br>No PPI data is collected. All calculations happen locally on your browser.
-                <br>You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
-                <br>Option 3 is enabled only after "Analyze Portfolio"
-                <br>If you dont find your fund, send an email to roshanm0903@gmail.com mentioning the fundname.
+                <br>1. No PPI data is collected. All calculations happen locally on your browser.
+                <br>2. You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
+                <br>3. If you dont find your fund, send an email to roshanm0903@gmail.com mentioning the fundname.
             </p>
 
         </div>
@@ -573,6 +647,8 @@
             <div class="container">
                 <h4 id="message2">
                 </h4>
+                <p id="message1">
+                </p>
                 <div id="plots">
                     <canvas id="myChart_sec" style="width:100%;"></canvas>
                     <canvas id="myChart_ind" style="width:100%;"></canvas>
@@ -580,8 +656,7 @@
                 </div>
             </div>
 
-            <p id="message1">
-            </p>
+
             <br>
             <p id="message3">
             </p>
