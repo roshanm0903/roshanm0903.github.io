@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"> </script>
 
+
     <script src="calculations.js"></script>
     <script src="plot.js"></script>
 
@@ -285,10 +286,7 @@
 
                     plotPairWiseOverlap(PairWiseOverlap);
                     
-                    document.getElementById("message2").innerHTML= "Done. Overlap between two funds is in percentage" ;
-                    // document.getElementById("message2").innerHTML= "" ;
-
-
+                    document.getElementById("message2").innerHTML= "Done" ;
 
             }).catch(function(err) {
             // Run this when promise was rejected via reject()

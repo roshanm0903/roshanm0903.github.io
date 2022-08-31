@@ -104,6 +104,8 @@ function plotPairWiseOverlap(combinations){
     // plot overview graphs
     var combinations = transpose(combinations);
 
+
+
     const config = new Chart("myChart_overlap",{
         type: 'horizontalBar',
         data: {labels: combinations[0],
@@ -125,8 +127,19 @@ function plotPairWiseOverlap(combinations){
                 display: true,
                 text: 'Chart.js Horizontal Bar Chart'
             }
-            }
+            },
+            scales: {
+                xAxes: [{
+                  ticks: {
+                    callback: function(tick) {
+                      return tick.toString() + '%';
+                    }
+                  }
+                }]
+              }
+            
         },
+
         });
 
 
