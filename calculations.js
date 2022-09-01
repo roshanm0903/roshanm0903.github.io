@@ -9,6 +9,7 @@ function generatePorfolio(Funds, Data){
     var UserFunds = Funds[0].map((_, colIndex) => Funds.map(row => row[colIndex])); // transpose
 
     var portfolioAmount  =  UserFunds[1].reduce((a, b) => a + b, 0);
+    console.log("Portfolio Amount is : " + portfolioAmount);
 
     // get the single fund name which is to be compared with the portfolio
     var compFund = UserFunds[0][ UserFunds[2].indexOf(true)]; 
@@ -25,6 +26,11 @@ function generatePorfolio(Funds, Data){
         
         // console.log("Printing Fund Data");
         // console.log(FundData);
+        if (secAmount>0){
+            //pass
+        }else{
+            secAmount = 0;
+        }
 
         //summarise by security wise
         if ( FundData[row][1] in securityWise ){     // { "security name 1" : [ amount , portfolio_percentage, compfund_shareholding], "security name w" : [ amount , portfolio_percentage, compfund_shareholding],...  }

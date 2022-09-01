@@ -48,11 +48,12 @@ function plot(securityWise,industryWise){
 }
 
 function plotSecuritesOverlap(securityWise){
-    document.getElementById("plots").innerHTML = ' <canvas id="myChart_sec_ovelap" width=100%  height=1000"></canvas>';
-
+   
     // plot overview graphs
     var vectors = getSortedCommonSecurity(securityWise);
     vectors = transpose(vectors);
+    document.getElementById("plots").innerHTML = ' <canvas id="myChart_sec_ovelap" width=100%  height='+ 5*vectors[0].length +'px"></canvas>';
+
     console.log("printing final vectors");
     console.log(vectors);
 
@@ -97,13 +98,14 @@ function plotSecuritesOverlap(securityWise){
 }
 
 function plotPairWiseOverlap(combinations){
-    document.getElementById("plots").innerHTML = '<canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>';
 
+    
     // console.log("printing combinations");
     // console.log(combinations);
     // plot overview graphs
     var combinations = transpose(combinations);
 
+    document.getElementById("plots").innerHTML = '<canvas id="myChart_overlap" width=100%  height='+ 5*combinations[0].length +'px"></canvas>';
 
 
     const config = new Chart("myChart_overlap",{

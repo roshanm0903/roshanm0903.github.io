@@ -9,8 +9,13 @@
 
     gtag('config', 'G-VG8YQ8739T');
     </script>
-	
+	<meta charset="utf-8">
+
+
+    <meta name="description" content="Analyze Mutual Fund Portfolio, Detect lack of diversification or overlaps">
     <title>Portfolio Analyzer</title>
+    
+
     <meta name="viewport" content="width=device-width" />
     
 	<script type="text/javascript" 
@@ -194,7 +199,8 @@
                         FundData.push( [fund, data[fund][sec][0], data[fund][sec][1] , data[fund][sec][2]]);    
                     }
                 }
-            var [ securityWise, industryWise] = generatePorfolio(FundsSelected, FundData);
+
+            var [securityWise, industryWise] = generatePorfolio(FundsSelected, FundData);
 
             console.log(securityWise);
             console.log(industryWise);
