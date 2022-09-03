@@ -9,13 +9,8 @@
 
     gtag('config', 'G-VG8YQ8739T');
     </script>
-	<meta charset="utf-8">
-
-
-    <meta name="description" content="Analyze Mutual Fund Portfolio, Detect lack of diversification or overlaps">
+	
     <title>Portfolio Analyzer</title>
-    
-
     <meta name="viewport" content="width=device-width" />
     
 	<script type="text/javascript" 
@@ -49,9 +44,10 @@
                                                             </div>';
         $("#FundInput").select2();
 
+        // old url      url: "https://script.google.com/macros/s/AKfycbzEqBzXTk0EPb9Hln-sw72hkUnDZD0C4_c_9laHcpL9KglW5R3ZLUpgrtgZpwcoxncYXg/exec"
 			$.ajax({ 
            method: "get", 
-           url: "https://script.google.com/macros/s/AKfycbzEqBzXTk0EPb9Hln-sw72hkUnDZD0C4_c_9laHcpL9KglW5R3ZLUpgrtgZpwcoxncYXg/exec"
+           url: "https://portfolioanalyzer.000webhostapp.com/getdata.php?Type=FundNames&FundNames="
         //    data: {}
 
          }).done(function( data ) { 
@@ -140,17 +136,18 @@
             var fundname_concat = [];
 
             for (fund in Funds){
-                fundname_concat = fundname_concat + Funds[fund][0] + ", ";
+                fundname_concat = fundname_concat + Funds[fund][0] + ",";
             }
             console.log(fundname_concat);
 
             console.log("Getting data from appsciprt");
 
+            // old API url "https://script.google.com/macros/s/AKfycbyIy6shJ7Mh1Zxlo3ERwMatVcXIEmNvvbn7smzQ6l0ki4cSQg62hfJicZUaduV-MgFF/exec",
             return new Promise(function(resolve, reject) {
                 $.ajax({
                 method: "get",
-                url: "https://script.google.com/macros/s/AKfycbyIy6shJ7Mh1Zxlo3ERwMatVcXIEmNvvbn7smzQ6l0ki4cSQg62hfJicZUaduV-MgFF/exec",
-                data: { fundName : fundname_concat },
+                url:    "https://portfolioanalyzer.000webhostapp.com/getdata.php",
+                data: { Type:"FundHoldings", FundNames : fundname_concat },
                 success: function(data) {
                     resolve(data["data"]); // Resolve promise and go to then()
                 },
@@ -193,17 +190,22 @@
             
             getFundData(FundsSelected).then(function(data) {
             // Run this when your request was successful
-            FundDatatDict = data;       
+            FundDatatDict = data;  
+            console.log(" herefsdfads fds");     
                 for (fund in data){
                     for (sec in data[fund]){
-                        FundData.push( [fund, data[fund][sec][0], data[fund][sec][1] , data[fund][sec][2]]);    
+                    // FundData.push( [fund, data[fund][sec][0], data[fund][sec][1] , data[fund][sec][2]]);   
+                        FundData.push( [fund, data[fund][sec].Security, data[fund][sec].Sector , data[fund][sec].Share]);    
                     }
+                    console.log("Fund dfadgdas is" + fund);
                 }
+            console.log("fund data  iss   ");
+            console.log(FundData);
 
-            var [securityWise, industryWise] = generatePorfolio(FundsSelected, FundData);
+            var [ securityWise, industryWise] = generatePorfolio(FundsSelected, FundData);
 
-            console.log(securityWise);
-            console.log(industryWise);
+            // console.log(securityWise);
+            // console.log(industryWise);
             plot(securityWise,industryWise);
 
             document.getElementById("message2").innerHTML= " " ;
@@ -230,7 +232,8 @@
             FundDatatDict = data;       
                 for (fund in data){
                     for (sec in data[fund]){
-                        FundData.push( [fund, data[fund][sec][0], data[fund][sec][1] , data[fund][sec][2]]);    
+                        // FundData.push( [fund, data[fund][sec][0], data[fund][sec][1] , data[fund][sec][2]]);   
+                        FundData.push( [fund, data[fund][sec].Security, data[fund][sec].Sector , data[fund][sec].Share]); 
                     }
                 }
             var [ securityWise, industryWise, compFund] = generatePorfolio(FundsSelected, FundData);
@@ -273,18 +276,23 @@
 
                     var sec1 = FundDatatDict[combinations[combi][0]];
                     var sec2 = FundDatatDict[combinations[combi][1]];
+                    console.log("printing sec1");
+                    console.log(sec1);
 
                     var vectors = {};
                     for ( sec in sec1){
-                        vectors[sec1[sec][0]] = [sec1[sec][2], 0 ];
+                        vectors[sec1[sec].Security] = [sec1[sec].Share, 0 ];
                     }
                     for (sec in sec2){
-                        if (sec2[sec][0] in vectors){
-                            vectors[sec2[sec][0]][1] = sec2[sec][2];
+                        if (sec2[sec].Security in vectors){
+                            vectors[sec2[sec].Security][1] = sec2[sec].Share;
                         }else{
-                            vectors[sec2[sec][0]] = [ 0, sec2[sec][2]];
+                            vectors[sec2[sec].Security] = [ 0, sec2[sec].Share];
                         }
                     }
+
+                    console.log(" vectors are ");
+                    console.log(vectors);
 
                     var vector_arr =[];
 
