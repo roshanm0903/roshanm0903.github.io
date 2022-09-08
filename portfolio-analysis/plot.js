@@ -134,6 +134,8 @@ function plotPairWiseOverlap(combinations){
             scales: {
                 xAxes: [{
                   ticks: {
+                    beginAtZero: true,
+                    max: 100,
                     callback: function(tick) {
                       return tick.toString() + '%';
                     }

@@ -16,14 +16,15 @@ function generatePorfolio(Funds, Data){
     var compFund = UserFunds[0][ UserFunds[2].indexOf(true)]; 
     
     console.log("portfolio Amount "+portfolioAmount );
-    // console.log("comp fund "+compFund );
-    // console.log(FundData);
+    console.log("comp fund "+compFund );
+    console.log("FUND DATA IS ///////");
+    console.log(FundData);
 
     for (row in FundData){
         // multiply the security fractional ammount with the fund amount
         var Amount = UserFunds[1][ UserFunds[0].indexOf(FundData[row][0])];
-        var secAmount = (FundData[row][3]*Amount);
-        FundData[row].push(secAmount );
+        var secAmount = parseFloat(FundData[row][3]*Amount);
+        FundData[row].push(secAmount);
         
         // console.log("Printing Fund Data");
         // console.log(FundData);
@@ -32,12 +33,12 @@ function generatePorfolio(Funds, Data){
         if ( FundData[row][1] in securityWise ){     // { "security name 1" : [ amount , portfolio_percentage, compfund_shareholding], "security name w" : [ amount , portfolio_percentage, compfund_shareholding],...  }
             // security already exists, add the amounts
             securityWise[FundData[row][1]][0] += secAmount; // amount
-            securityWise[FundData[row][1]][1] += (secAmount/portfolioAmount); // as percentage
-            securityWise[FundData[row][1]][2] = checkCompFund(compFund,FundData[row]);
+            securityWise[FundData[row][1]][1] += parseFloat(secAmount/portfolioAmount); // as percentage
+            securityWise[FundData[row][1]][2] += checkCompFund(compFund,FundData[row]);
 
         } else{
             //security doesnt exists, add the security and the amount
-            securityWise[FundData[row][1]] = [ secAmount , secAmount/portfolioAmount, checkCompFund(compFund,FundData[row]) ] ;
+            securityWise[FundData[row][1]] = [ secAmount , parseFloat(secAmount/portfolioAmount), checkCompFund(compFund,FundData[row]) ] ;
         }
 
         //sumarise by industry wise
@@ -52,7 +53,7 @@ function generatePorfolio(Funds, Data){
 
     }
     console.log("printing sdcuritywise");
-    // console.log(securityWise);
+    console.log(securityWise);
 
     return [securityWise,industryWise,compFund];
 
@@ -89,7 +90,7 @@ function dotProduct(vectors){
 function checkCompFund(fundName,fundDetailRow){
  
     if(fundName == fundDetailRow[0]){
-        return (fundDetailRow[3]);
+        return parseFloat(fundDetailRow[3]);
     }else{
         return 0;
 
