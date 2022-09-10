@@ -1,6 +1,9 @@
 function plot(securityWise,industryWise){
-    document.getElementById("plots").innerHTML = ' <canvas id="myChart_sec" style="width:100%;"></canvas> \
-            <canvas id="myChart_ind" style="width:100%;"></canvas>';
+    document.getElementById("plots").innerHTML = 
+        '  <canvas id="myChart_sec" style="width:100%;"></canvas> \
+           <p id="sec_message"></p> \
+           <canvas id="myChart_ind" style="width:100%;"></canvas>\
+           <p id="ind_message"></p>';
 
     // plot overview graphs
 

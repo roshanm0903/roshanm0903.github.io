@@ -237,13 +237,19 @@
 
             console.log(skew);
             
-                        putData(FundsSelected, PortfolioAmount,skew).then(function(data){
 
+            putData(FundsSelected, PortfolioAmount,skew).then(function(data){
                         }).catch(function(err) {
                         // Run this when promise was rejected via reject()
                         console.log(err);
                         })
-                        
+            
+            document.getElementById("sec_message").innerHTML= "<b>80%</b> of your portfolio is held in <b>"+ skew["security"]["80"] +"</b> securities. " ;
+            document.getElementById("sec_message").innerHTML += "<br> Total number of securities in your portfolio is <b>"+ skew["security"]["count"] +"</b>." ;
+
+
+            document.getElementById("ind_message").innerHTML= "<b>80%</b> of your portfolio is held in <b>"+ skew["industry"]["80"] +"</b> industries/sectors. " ;
+            document.getElementById("ind_message").innerHTML += "<br> You have exposure to <b>"+ skew["industry"]["count"] +"</b> industries in total." ;
 
             document.getElementById("message2").innerHTML= " " ;
 
@@ -424,9 +430,7 @@
                 <p id="message1">
                 </p>
                 <div id="plots">
-                    <canvas id="myChart_sec" style="width:100%;"></canvas>
-                    <canvas id="myChart_ind" style="width:100%;"></canvas>
-                    <canvas id="myChart_overlap" style="width:100%;max-width:700px"></canvas>
+                    
                 </div>
             </div>
 
