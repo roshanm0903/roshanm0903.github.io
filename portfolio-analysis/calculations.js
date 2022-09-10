@@ -62,7 +62,7 @@ function generatePorfolio(Funds, Data){
 
 function getFundNames(Funds){
     var fundname_concat =[];
-    
+
     for (fund in Funds){
         fundname_concat = fundname_concat + Funds[fund][0] + ",";
     }
@@ -76,9 +76,11 @@ function dotProduct(vectors){
     var b_sum = 0;
 
     for (row in vectors){
-        var a = Number(vectors[row][1] );
-        var b = Number(vectors[row][2] );
-        vectors[row][3] = a*b; //a.b
+        var a = parseFloat(vectors[row][1] );
+        var b = parseFloat(vectors[row][2] );
+        vectors[row][1] = parseFloat(100*a).toFixed(2);
+        vectors[row][2] = parseFloat(100*b).toFixed(2);
+        vectors[row][3] = parseFloat(100*a*b).toFixed(2);; //a.b
         dot_sum += (a*b);
         a_sum += (a*a);
         b_sum += (b*b);
@@ -92,7 +94,7 @@ function dotProduct(vectors){
     //sort the vector on column 4
     // vectors = getSortedCommonSecurity(vectors);
 
-    return  [Math.round(value ), vectors ];
+    return  [Math.round(value), vectors ];
 
 }
 
@@ -115,9 +117,11 @@ function getSortedData(dict){
     items.sort(function(first, second) {
         return second[1] - first[1];
     });
+  
 
     items  = transpose(items);
     
+
     return items;
 
 }
@@ -134,13 +138,18 @@ function getSortedOverlapData(a,b){
 
 function getSortedCommonSecurity(dict){
     var items = Object.keys(dict).map(function(key) {
-          return [key, dict[key][0],dict[key][1],dict[key][2]];
+          return [key, dict[key][1],dict[key][2],dict[key][3]];
         });
+
+    console.log("items before sorting........");
+    console.log(items);
 
     items.sort(function(first, second) {
         return second[3] - first[3];
     });
-    
+    console.log("items after sorting........");
+    console.log(items);
+
     return items;
     
 }
