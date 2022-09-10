@@ -417,90 +417,76 @@
 <body>
  
 
-    <div class="row g-0">
-        <div class="col-1">
-        </div>
-        <div class="col-10">
+    <div class="row">
+        <div class="col-1 px-0"> </div>
+
+        <div class="col-10 px-0">
             <h1>Portfolio Analyser
             </h1>
             <h4>
                 Mutual fund distribution across stocks & industry and overlap analysis<br>
             </h4>
             <a href="https://roshanm0903.github.io/blogs/Is_Your_Mutual_Fund_Portfolio_Really_Diversified.html">Importance of checking for overlaps<br><br></a> 
-        </div>
-        <div class="col-1">
-        </div>
-    </div>
-
-    <div class="row g-0">
         
-        <div class="col-1">
-
-        </div>
         
-        <div class="col-4">
-                <div>
-                    <div id='Funds'></div>
-                    <button type="button" id="AddFundsBtn" onclick="addRow()" class="btn btn-primary btn-block mb-4">Add Fund</button>
-                    <br>
-                    <br>
-                    <button type="button" id="AnalyzePortfolioBtn" onclick="AnalyzePortfolio()" class="btn btn-primary btn-block mb-4">Analyze Portfolio</button>
-                    <button type="button" id="FindSelectedOverlapBtn" onclick="FindSelectedOverlap()" class="btn btn-primary btn-block mb-4">Find overlap with selected</button>
-                    <button type="button" id="FindAllOverlapsBtn" onclick="FindAllOverlaps()" class="btn btn-primary btn-block mb-4">Find all overlaps</button>
-                    
+            <div class="row">
+
+                <div class="col-12 col-md-5">
+                        <div>
+                            <div id='Funds'></div>
+                            <button type="button" id="AddFundsBtn" onclick="addRow()" class="btn btn-primary btn-block mb-4">Add Fund</button>
+                            <br>
+                            <br>
+                            <button type="button" id="AnalyzePortfolioBtn" onclick="AnalyzePortfolio()" class="btn btn-primary btn-block mb-4">Analyze Portfolio</button>
+                            <button type="button" id="FindSelectedOverlapBtn" onclick="FindSelectedOverlap()" class="btn btn-primary btn-block mb-4">Find overlap with selected</button>
+                            <button type="button" id="FindAllOverlapsBtn" onclick="FindAllOverlaps()" class="btn btn-primary btn-block mb-4">Find all overlaps</button>
+                            
+                        </div>
                 </div>
-
-            <h4>   Steps:</h4>
-            <p>
-                Add each fund in your portfolio along with the invested amount.
-                <br>
-                <h5>Options Available</h5>
                 
-                    1. To view distribution of your portfolio by stocks and by industry, click "Analyze Portfolio".
-                <br>2. To check the Overlap of a certain fund with the portfolio, select the fund using the checkbox next to it and click "Find Overlap with Selected"
-                <br>3. To check for the Overlap between all pair wise combinations of the funds in your portfolio, click on "Find all Overlaps"
-                <br>
-                <br>Note: 
-                <br>1. No PPI data is collected. All calculations happen locally on your browser.
-                <br>2. You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
-                <br>3. If you dont find your fund, send an email to roshanm0903@gmail.com mentioning the fundname.
-            </p>
-
-        </div>
+                <div class="col-12 col-md-7">
         
-        <div class="col-6">
-
-            <div class="container">
-                <h4 id="message2">
-                </h4>
-                <p id="message1">
-                </p>
-                <div id="plots">
+                    <div class="container">
+                        <h4 id="message2">
+                        </h4>
+                        <p id="message1">
+                        </p>
+                        <div id="plots">
+                            
+                        </div>
+                    </div>
                     
                 </div>
-            </div>
-
-
-            <br>
-            <p id="message3">
-            </p>
+                
+                <div>
+                
+                    <h4>Steps:</h4>
+                    
+                    <p>
+                        Add each fund in your portfolio along with the invested amount.
+                        <br>
+                        <h4>Options Available</h4>
                         
-            <h5 id="message4">
-            </h5>
-            
-        </div>
+                            1. To view distribution of your portfolio by stocks and by industry, click "Analyze Portfolio".
+                        <br>2. To check the Overlap of a certain fund with the portfolio, select the fund using the checkbox next to it and click "Find Overlap with Selected"
+                        <br>3. To check for the Overlap between all pair wise combinations of the funds in your portfolio, click on "Find all Overlaps"
+                        <br>
+                        <br>Note: 
+                        <br>1. No PPI data is collected. All calculations happen locally on your browser.
+                        <br>2. You can select only one fund to compare with the portfolio. Portfolio includes the fund selected.
+                        <br>3. If you dont find your fund, send an email to roshanm0903@gmail.com mentioning the fundname.
+                    </p>            
+                    <h7>Data sourced from moneycontrol.com</h7>
+                    
+                </div>
+
         
-        <div class="col-1">
         </div>
-    
+
+        <div class="col-1 px-0"> </div>
+
     </div>
 
-<!-- </div> -->
 
-
-
-
-
-<h7>Data sourced from moneycontrol.com</h7>
 </body>
 </html>
