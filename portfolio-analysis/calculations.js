@@ -52,13 +52,22 @@ function generatePorfolio(Funds, Data){
         }
 
     }
-    console.log("printing sdcuritywise");
-    console.log(securityWise);
+    // console.log("printing indsury wise .........");
+    // console.log(industryWise);
+    
 
-    return [securityWise,industryWise,compFund];
+    return [securityWise,industryWise,compFund,portfolioAmount];
 
 }
 
+function getFundNames(Funds){
+    var fundname_concat =[];
+    
+    for (fund in Funds){
+        fundname_concat = fundname_concat + Funds[fund][0] + ",";
+    }
+    return fundname_concat;
+}
 
 function dotProduct(vectors){
     
@@ -153,4 +162,97 @@ function getCombinations(Funds){
     return results;
 
     }
-Footer
+
+function getskewness(securityWise,industryWise){
+
+    securityWise = transpose(getSortedData(securityWise));
+    industryWise = transpose(getSortedData(industryWise));
+
+    var sec_fifty = 0;
+    var sec_eighty = 0;
+    var sec_ninetyFive = 0;
+    var ind_fifty = 0;
+    var ind_eighty = 0;
+    var ind_ninetyFive = 0;
+    var result = {};
+
+    var fifty_flag = false;
+    var eighty_flag = false;
+
+    var temp_cumulator = 0.0;
+    var count = 0;
+
+    for (sec in securityWise){
+        count +=1;
+        temp_cumulator += securityWise[sec][2];
+        if ( temp_cumulator > 0.5 && !fifty_flag){
+            sec_fifty = count;
+            fifty_flag = true;
+        }
+        if ( temp_cumulator > 0.8 && !eighty_flag){
+            sec_eighty = count;
+            eighty_flag = true;
+        }
+        if ( temp_cumulator > 0.95){
+            sec_ninetyFive = count;
+            break;
+        }   
+    }
+
+    if(sec_ninetyFive==0.0){
+        sec_ninetyFive = 1.0;
+    }
+
+    count =0;
+    temp_cumulator = 0.0;
+    fifty_flag = false;
+    eighty_flag = false;
+    
+    for (sec in industryWise){
+        count +=1;
+        temp_cumulator += industryWise[sec][2];
+
+        if ( temp_cumulator > 0.5 && !fifty_flag){
+            ind_fifty = count;
+            fifty_flag = true;
+        }
+        if ( temp_cumulator > 0.8 && !eighty_flag){
+            ind_eighty = count;
+            eighty_flag = true;
+        }
+        if ( temp_cumulator > 0.95){
+            ind_ninetyFive = count;
+            break;
+        }   
+    }
+    if(ind_ninetyFive==0.0){
+        ind_ninetyFive = 1.0;
+    }
+    // console.log(ind_fiftyPer,ind_eightyPer,ind_ninetyFivePer);
+
+    return { "security":
+                        {
+                            "count"  : Object.keys(securityWise).length,
+                            "50"     : sec_fifty,
+                            "80"     : sec_eighty,
+                            "98"     : sec_ninetyFive,
+                            "50_per" : sec_fifty/Object.keys(securityWise).length,
+                            "80_per" : sec_eighty/Object.keys(securityWise).length,
+                            "98_per" : sec_ninetyFive/Object.keys(securityWise).length
+                        },
+            "industry":
+                        {
+                            "count"  : Object.keys(industryWise).length,
+                            "50"     : ind_fifty,
+                            "80"     : ind_eighty,
+                            "98"     : ind_ninetyFive,
+                            "50_per" : ind_fifty/Object.keys(industryWise).length,
+                            "80_per" : ind_eighty/Object.keys(industryWise).length,
+                            "98_per" : ind_ninetyFive/Object.keys(industryWise).length
+                        }
+
+
+            };
+    
+
+}

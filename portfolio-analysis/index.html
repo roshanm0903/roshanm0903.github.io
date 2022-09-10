@@ -140,12 +140,8 @@
         }
   
         function getFundData(Funds) {
-            var fundname_concat = [];
 
-            for (fund in Funds){
-                fundname_concat = fundname_concat + Funds[fund][0] + ",";
-            }
-            console.log(fundname_concat);
+            var fundname_concat = getFundNames(Funds);
 
             console.log("Getting data from appsciprt");
 
@@ -191,10 +187,32 @@
 
         }
 
+        function putData(PortfolioFunds,Amount,Skew){
+
+            return new Promise(function(resolve, reject) {
+                $.ajax({
+                method: "post",
+                url:    "https://portfolioanalyzer.000webhostapp.com/putdata.php",
+                data: { skew:Skew, amount:Amount, portfolioFunds: getFundNames(PortfolioFunds) },
+                success: function(data) {
+                    resolve(); // Resolve promise and go to then()
+
+                },
+                error: function(err) {
+                    // document.getElementById("message2").innerHTML= "Erro Loading Data : " + JSON.stringify(err, null, 2);
+                    // reject(err); // Reject the promise and go to catch()
+                }
+                });
+            });
+
+        }
+
         function AnalyzePortfolio(){
             document.getElementById("plots").innerHTML =" "; // clear canvas
             var FundsSelected  = get_Funds();
             var FundData = [];
+            var CompFund = 0;
+            var PortfolioAmount = 0;
             
             getFundData(FundsSelected).then(function(data) {
             // Run this when your request was successful
@@ -207,14 +225,25 @@
                     }
                     console.log("Fund dfadgdas is" + fund);
                 }
-            console.log("fund data  iss   ");
-            console.log(FundData);
+            // console.log("fund data  iss   ");
+            // console.log(FundData);
 
-            var [ securityWise, industryWise] = generatePorfolio(FundsSelected, FundData);
+            var [ securityWise, industryWise,CompFund, PortfolioAmount] = generatePorfolio(FundsSelected, FundData);
 
             // console.log(securityWise);
             // console.log(industryWise);
             plot(securityWise,industryWise);
+            var skew = getskewness(securityWise, industryWise);
+
+            console.log(skew);
+            
+                        putData(FundsSelected, PortfolioAmount,skew).then(function(data){
+
+                        }).catch(function(err) {
+                        // Run this when promise was rejected via reject()
+                        console.log(err);
+                        })
+                        
 
             document.getElementById("message2").innerHTML= " " ;
 

@@ -42,9 +42,6 @@ function plot(securityWise,industryWise){
 
             });
 
-
-
-
 }
 
 function plotSecuritesOverlap(securityWise){
