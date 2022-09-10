@@ -97,10 +97,10 @@
             DivString +=                '</select>\
                                     </div>\
                                     <div class="col-2 px-0">\
-                                        <input type="number" class="px-0" style="width:100%" placeholder="Enter Amount" id="Amount' + id +'">\
+                                        <input type="number" style="width:100%" placeholder="Enter Amount" id="Amount' + id +'">\
                                     </div>\
                                     <div class="col-1 pl-0">\
-                                        <button type="button" class="px-0 close"  onclick= RemoveFundRow("FundRow' +id+ '")>\
+                                        <button type="button" class="close"  onclick= RemoveFundRow("FundRow' +id+ '")>\
                                             <span aria-hidden="true">&times;</span>\
                                         </button>\
                                     </div>\
@@ -347,6 +347,7 @@
 
         function FindAllOverlaps(){
             document.getElementById("plots").innerHTML =" ";
+            document.getElementById("message1").innerHTML ="";
 
             var FundData = [];
             var PairWiseOverlap = [];
@@ -395,7 +396,7 @@
 
                     plotPairWiseOverlap(PairWiseOverlap);
                     
-                    document.getElementById("message2").innerHTML= "Done" ;
+                    document.getElementById("message2").innerHTML= "" ;
 
             }).catch(function(err) {
             // Run this when promise was rejected via reject()
