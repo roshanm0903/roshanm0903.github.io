@@ -162,7 +162,8 @@
             });
         }
 
-        function get_Funds(){
+        function get_Funds(type){
+            
             document.getElementById("message2").innerHTML= '<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">\
                                                                 <span class="sr-only">Loading...</span>\
                                                             </div>';
@@ -173,14 +174,50 @@
 
                 if (document.getElementById("FundInput"+i) != null){
                     var fund = document.getElementById("FundInput"+i).options[document.getElementById("FundInput"+i).selectedIndex].text;
-                    var fundAmount = document.getElementById("Amount"+i).value;
-                    var selected = document.getElementById("Fundselect"+i).checked;                
+                    var selected = document.getElementById("Fundselect"+i).checked;  
+
+                    if (type=="SelectedOverlap" && selected){ //exclude the amounts from the selected fund from the portfolio
+                        var fundAmount = 0;
+                    }else{
+                        var fundAmount = document.getElementById("Amount"+i).value;
+                    }
+                    
                     // console.log(fund);
                     FundSelected.push([fund,Number(fundAmount),selected]); 
                 }
-              
-
             }
+
+            // validations
+
+            // there must be funds selected for Find overlap with selected option
+            if (type=="SelectedOverlap"){        
+                    var pass = false;
+                    for (row in FundSelected){
+                        pass = pass || FundSelected[row][2];
+                    }
+                    if (!pass){
+                        alert("Select atleast one fund.");
+                        
+                    }
+            }
+
+            // amount values must be entered
+            if (type=="AnalyzePortfolio"){        
+                    var pass = true;
+                    for (row in FundSelected){
+                        if (FundSelected[row][1]>0){
+                            // pass
+                        }else{
+                            pass = false;
+                        }
+                    }
+                    if (!pass){
+                        alert("Please enter amounts for all funds added.");
+                        
+                    }
+            }
+
+
             return FundSelected;
             // getdata(FundSelected);
 
@@ -209,7 +246,7 @@
 
         function AnalyzePortfolio(){
             document.getElementById("plots").innerHTML =" "; // clear canvas
-            var FundsSelected  = get_Funds();
+            var FundsSelected  = get_Funds("AnalyzePortfolio");
             var FundData = [];
             var CompFund = 0;
             var PortfolioAmount = 0;
@@ -266,7 +303,8 @@
         function FindSelectedOverlap(){
             document.getElementById("plots").innerHTML =" ";
 
-            var FundsSelected  = get_Funds();
+            var FundsSelected  = get_Funds("SelectedOverlap");
+
             var FundData = [];
             // console.log("Here");
             // console.log(FundsSelected);
@@ -279,6 +317,8 @@
                         FundData.push( [fund, data[fund][sec].Security, data[fund][sec].Sector , data[fund][sec].Share]); 
                     }
                 }
+
+
             var [ securityWise, industryWise, compFund] = generatePorfolio(FundsSelected, FundData);
 
             // check the value of overlap
@@ -308,7 +348,7 @@
             var FundData = [];
             var PairWiseOverlap = [];
             
-            var FundsSelected  = get_Funds();
+            var FundsSelected  = get_Funds("AllOverlaps");
             var combinations = getCombinations(FundsSelected);
              
             getFundData(FundsSelected).then(function(data) {
