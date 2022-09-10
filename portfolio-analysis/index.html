@@ -84,10 +84,10 @@
 
             var DivString = '<div >\
                                 <div class="row" id="FundRow' + id +'">\
-                                    <div class="col-1">\
+                                    <div class="col-1 pr-0">\
                                             <input type="checkbox" class="check-input" id="Fundselect' + id +'">\
                                     </div>\
-                                    <div class="col-8">\
+                                    <div class="col-8 ">\
                                         <select class="js-example-responsive" style="width: 100%" id="FundInput' + id +'">\
                                             <option value="" disabled selected>Select your fund</option>';
                                                 for (fund in FundDetails){
@@ -96,11 +96,11 @@
                                             
             DivString +=                '</select>\
                                     </div>\
-                                    <div class="col-2">\
-                                        <input type="number" style="width:100%" placeholder="Enter Amount" id="Amount' + id +'">\
+                                    <div class="col-2 px-0">\
+                                        <input type="number" class="px-0" style="width:100%" placeholder="Enter Amount" id="Amount' + id +'">\
                                     </div>\
-                                    <div class="col-1">\
-                                        <button type="button" class="close"  style="padding: 0px 0px 0px 0px"  onclick= RemoveFundRow("FundRow' +id+ '")>\
+                                    <div class="col-1 pl-0">\
+                                        <button type="button" class="px-0 close"  onclick= RemoveFundRow("FundRow' +id+ '")>\
                                             <span aria-hidden="true">&times;</span>\
                                         </button>\
                                     </div>\
@@ -414,40 +414,40 @@
 </style>
 
 <body>
-	<!-- <div class="container"> -->
-    <h1>Portfolio Analyser
-    </h1>
-    
-    <div class="row">
-        <div class="col-1">
+ 
 
+    <div class="row g-0">
+        <div class="col-1">
         </div>
-        <div class="col-4">
+        <div class="col-10">
+            <h1>Portfolio Analyser
+            </h1>
             <h4>
                 Mutual fund distribution across stocks & industry and overlap analysis<br>
             </h4>
-            <a href="https://www.moneycontrol.com/news/business/personal-finance/avoiding-portfolio-overlap-while-investing-in-mutual-funds-9070951.html">Importance of checking for overlaps<br><br></a> 
-        
-            <!-- <section class="w-100 p-4 d-flex justify-content-center pb-4"> -->
-                <div>
-                    <!-- <form style="width: 30rem;"></form> -->
-        
-                    <div id='Funds'></div>
+            <a href="https://roshanm0903.github.io/blogs/Is_Your_Mutual_Fund_Portfolio_Really_Diversified.html">Importance of checking for overlaps<br><br></a> 
+        </div>
+        <div class="col-1">
+        </div>
+    </div>
 
-                    
-                    <div class="row">
+    <div class="row g-0">
+        
+        <div class="col-1">
+
+        </div>
+        
+        <div class="col-4">
+                <div>
+                    <div id='Funds'></div>
                     <button type="button" id="AddFundsBtn" onclick="addRow()" class="btn btn-primary btn-block mb-4">Add Fund</button>
-                    </div>
-                    
                     <br>
                     <br>
                     <button type="button" id="AnalyzePortfolioBtn" onclick="AnalyzePortfolio()" class="btn btn-primary btn-block mb-4">Analyze Portfolio</button>
                     <button type="button" id="FindSelectedOverlapBtn" onclick="FindSelectedOverlap()" class="btn btn-primary btn-block mb-4">Find overlap with selected</button>
                     <button type="button" id="FindAllOverlapsBtn" onclick="FindAllOverlaps()" class="btn btn-primary btn-block mb-4">Find all overlaps</button>
                     
-                    <!-- </form> -->
                 </div>
-            <!-- </section>   -->
 
             <h4>   Steps:</h4>
             <p>
@@ -466,7 +466,9 @@
             </p>
 
         </div>
+        
         <div class="col-6">
+
             <div class="container">
                 <h4 id="message2">
                 </h4>
@@ -486,8 +488,8 @@
             </h5>
             
         </div>
+        
         <div class="col-1">
-
         </div>
     
     </div>
