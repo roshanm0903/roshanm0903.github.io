@@ -70,11 +70,11 @@
 				FundDetails.push([result.data[fund].FundName, result.data[fund].Link]);
 
 			}
-			// console.log(FundDetails);
 
 
 		});
     });
+
         
         function RemoveFundRow(fundRowId){
             document.getElementById(fundRowId).remove();
@@ -82,13 +82,15 @@
 
         function addRow(FundDiv){
 
+            var addMarker = "";
+            if (FundDiv == "CompFund"){
+                addMarker = "CompFund";
+            }
+
             var DivString = '<div >\
-                                <div class="row" id="FundRow' + id +'">\
-                                    <div class="col-1 pr-0">\
-                                            <input type="checkbox" class="check-input" id="Fundselect' + id +'">\
-                                    </div>\
-                                    <div class="col-8 ">\
-                                        <select class="js-example-responsive" style="width: 100%" id="FundInput' + id +'">\
+                                <div class="row" id="FundRow'+id +'">\
+                                    <div class="col-9 ">\
+                                        <select class="js-example-responsive" style="width: 100%" name="'+addMarker+'Name" id="FundInput' + addMarker + id +'">\
                                             <option value="" disabled selected>Select your fund</option>';
                                                 for (fund in FundDetails){
                                                     DivString += '<option>' + FundDetails[fund][0] + '</option>';
@@ -97,7 +99,7 @@
             DivString +=                '</select>\
                                     </div>\
                                     <div class="col-2 px-0">\
-                                        <input type="number" style="width:100%" placeholder="Enter Amount" id="Amount' + id +'">\
+                                        <input type="number" style="width:100%" placeholder="Enter Amount" name="'+addMarker+'Amount" id="Amount' + id +'">\
                                     </div>\
                                     <div class="col-1 pl-0">\
                                         <button type="button" class="close"  onclick= RemoveFundRow("FundRow' +id+ '")>\
@@ -108,20 +110,16 @@
                             </div><br>';            
         
 
-            console.log('#'+FundDiv)
+            console.log('#'+FundDiv);
 
             // DivString = DivString + "</div></div>";
             $('#'+FundDiv).append(DivString); 
-            $('#FundInput'+id).select2({
+            
+            $('#FundInput' + addMarker+id).select2({
                 // width: 'resolve'
             }
             );
-    
-    
-            //one one can be selected
-            $('input.check-input').on('change', function() {
-                     $('input.check-input').not(this).prop('checked', false);  
-                    });
+
             
             //restrict to numbers
             // $('input.number').on('input', function() {
@@ -132,9 +130,12 @@
             document.getElementById("AnalyzePortfolioBtn").style.display = "block";
             
             if (id>1){
-            document.getElementById("FindSelectedOverlapBtn").style.display = "block";
                 document.getElementById("FindAllOverlapsBtn").style.display = "block";
             }
+            if (document.getElementsByName("CompFundName")[0]!=null){
+                document.getElementById("FindSelectedOverlapBtn").style.display = "block";
+            }
+
             id = id + 1;
 
         }
@@ -169,23 +170,22 @@
                                                             </div>';
             var FundSelected = [];
         
-            // get the funds selected in the form of an array
+            // get the funds added in the form of an array
             for (var i=1 ; i < id ; i++){
-
                 if (document.getElementById("FundInput"+i) != null){
                     var fund = document.getElementById("FundInput"+i).options[document.getElementById("FundInput"+i).selectedIndex].text;
-                    var selected = document.getElementById("Fundselect"+i).checked;  
-
-                    if (type=="SelectedOverlap" && selected){ //exclude the amounts from the selected fund from the portfolio
-                        var fundAmount = 0;
-                    }else{
-                        var fundAmount = document.getElementById("Amount"+i).value;
-                    }
-                    
-                    // console.log(fund);
-                    FundSelected.push([fund,Number(fundAmount),selected]); 
+                    var fundAmount = document.getElementById("Amount"+i).value;
+                    FundSelected.push([fund,Number(fundAmount),false]); 
                 }
             }
+            //get the fund added for comparison
+            if (type ==  "SelectedOverlap" ){
+                var compFund = document.getElementsByName("CompFundName")[0].options[document.getElementsByName("CompFundName")[0].selectedIndex].text;
+                var compFundAmount = document.getElementsByName("CompFundAmount")[0].value;
+
+                FundSelected.push([compFund,Number(compFundAmount),true]); 
+            }
+            
 
             // validations
 
@@ -202,7 +202,7 @@
             }
 
             // amount values must be entered
-            if (type=="AnalyzePortfolio"){        
+            if (type=="AnalyzePortfolio" || type =="SelectedOverlap" ){        
                     var pass = true;
                     for (row in FundSelected){
                         if (FundSelected[row][1]>0){
@@ -217,12 +217,10 @@
                     }
             }
 
-
             return FundSelected;
-            // getdata(FundSelected);
-
-
+            
         }
+    
 
         function putData(PortfolioFunds,Amount,Skew){
 
@@ -325,7 +323,7 @@
             var [ securityWise, industryWise, compFund] = generatePorfolio(FundsSelected, FundData);
 
             // check the value of overlap
-            document.getElementById("message1").innerHTML = "Comparing " + compFund + "(selected fund) with the rest of the Portfolio";
+            document.getElementById("message1").innerHTML = "Comparing " + compFund + "with the Portfolio";
             
             var [overlapVlaue , securityWise] = dotProduct(securityWise);
             document.getElementById("message2").innerHTML= "The overlap is " + overlapVlaue + " %" ;
@@ -401,10 +399,11 @@
             }).catch(function(err) {
             // Run this when promise was rejected via reject()
             console.log(err);
-            })
+            });
 
 
         }
+
         </script>
 
 
@@ -441,7 +440,10 @@
                                   <br>
                                   <br>
                                   <a href="#"  class="btn btn-primary btn-sm" id="AnalyzePortfolioBtn" onclick="AnalyzePortfolio()" class="btn btn-primary btn-block mb-4">Analyze Portfolio</a>
+                                  <div class="container row pt-2">
+                                  <a href="#"  class="btn btn-primary btn-sm " id="FindAllOverlapsBtn" onclick="FindAllOverlaps()" class="btn btn-primary btn-block mb-4">Find all pair-wise overlaps</a>
                                 </div>
+                                  </div>
                             </div>
                             <br>
                             <div class="card" >
@@ -449,13 +451,13 @@
                                     <h5 class="card-title">Add fund to compare with portfolio</h5>
                                         <div id='CompFund'></div>
                                   <a href="#" id="AddFundsBtn" class="btn btn-outline-primary btn-sm float-left" onclick="addRow('CompFund')">Add Fund</a>
-                                  <br>
-                                  <br>
-                                  <a href="#"  class="btn btn-primary btn-sm" id="FindSelectedOverlapBtn" onclick="FindSelectedOverlap()" class="btn btn-primary btn-block mb-4">Find overlap with portfolio</a>
-                                </div>
+                                    <br>
+                                    <div class="container row pt-2">
+                                    <a href="#"  class="btn btn-primary btn-sm" id="FindSelectedOverlapBtn" onclick="FindSelectedOverlap()" class="btn btn-primary btn-block mb-4">Find overlap with portfolio</a>
+                                    </div>
+                                  </div>
                             </div>
                             <br>
-                            <button type="button" id="FindAllOverlapsBtn" onclick="FindAllOverlaps()" class="btn btn-primary btn-block mb-4">Find all overlaps</button>
                             
                         </div>
                 </div>
