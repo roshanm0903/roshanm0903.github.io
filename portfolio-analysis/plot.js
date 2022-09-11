@@ -3,7 +3,8 @@ function showSecurityPlot(){
     document.getElementById("myChart_ind").style.display = "none";
     document.getElementById("sec_message").style.display = "block";
     document.getElementById("ind_message").style.display = "none";
-
+    document.getElementById('secPlotBtn').classList.add("active");
+    document.getElementById('indPlotBtn').classList.remove("active");
 }
 
 function showIndustryPlot(){
@@ -11,6 +12,8 @@ function showIndustryPlot(){
     document.getElementById("myChart_ind").style.display = "block";
     document.getElementById("sec_message").style.display = "none";
     document.getElementById("ind_message").style.display = "block";
+    document.getElementById('secPlotBtn').classList.remove("active");
+    document.getElementById('indPlotBtn').classList.add("active");
 }
 
 function plotDistribution(securityWise,industryWise){
@@ -20,7 +23,7 @@ function plotDistribution(securityWise,industryWise){
 
     document.getElementById("plots").innerHTML = 
         '   <div class="btn-group" role="group" aria-label="Basic example">\
-	            <button type="button" id="secPlotBtn" class="btn btn-secondary" onclick="showSecurityPlot()">View Security wise Distribution</button>\
+	            <button type="button" id="secPlotBtn" class="btn btn-secondary active" onclick="showSecurityPlot()">View Security wise Distribution</button>\
 	            <button type="button" id="indPlotBtn" class="btn btn-secondary" onclick="showIndustryPlot()">View Industry wise Distribution</button>\
             </div>\
             <br>\
