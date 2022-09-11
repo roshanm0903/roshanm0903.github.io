@@ -164,6 +164,72 @@ function plotSecuritesOverlap(securityWise){
 
 }
 
+function plotOverlapWithPortfolio(securityWise){
+   
+    // plot overview graphs
+    var vectors = getSortedCommonSecurity(securityWise);
+    vectors = transpose(vectors);
+    document.getElementById("plots").innerHTML = ' <canvas id="myChart_sec_ovelap" width=100%  height=' + 5*vectors[0].length +'px"></canvas>';
+
+    console.log("printing final vectors");
+    console.log(vectors);
+
+    var limit = 50;
+    const config = new Chart("myChart_sec_ovelap",{
+                type: 'horizontalBar',
+                data: {labels: vectors[0],
+                    datasets: [
+                        { label:"Holding in Portfolio", 
+                           data: vectors[1],
+                           backgroundColor:  "#ff9999"
+                        },
+                        { label:"Holding in Selected Fund", 
+                           data: vectors[3],
+                           backgroundColor:"#99c2ff"
+                        }
+                        
+                ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    elements: {
+                        bar: {
+                            borderWidth: 2,
+                        }
+                    },
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                          ticks: {
+                            beginAtZero: true,
+                            callback: function(tick) {
+                              return parseInt(tick).toString() + "%";
+                            }
+                          }
+                        }]
+                      },
+                      tooltips: {
+                        enabled: true,
+                        // mode: 'single',
+                        callbacks: {
+                            label: function(tooltipItems, data) { 
+                                return tooltipItems.xLabel + '%';
+                            }
+                        }
+                      }
+
+                    }
+                });
+
+
+
+}
+
 function plotPairWiseOverlap(combinations){
 
     

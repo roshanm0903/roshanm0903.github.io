@@ -217,6 +217,14 @@
                     }
             }
 
+            if (type=="AllOverlaps"){        
+                    
+                    if (FundSelected.length<2){
+                        alert("Please atleast one more fund.");
+                        document.getElementById("message2").innerHTML= "";
+                    }
+            }
+
             return FundSelected;
             
         }
@@ -323,17 +331,19 @@
             var [ securityWise, industryWise, compFund] = generatePorfolio(FundsSelected, FundData);
 
             // check the value of overlap
-            document.getElementById("message1").innerHTML = "Comparing " + compFund + "with the Portfolio";
             
-            var [overlapVlaue , securityWise] = dotProduct(securityWise);
+            var [overlapVlaue , securityWise] = getOverlapWithPortfolio(securityWise);
             document.getElementById("message2").innerHTML= "The overlap is " + overlapVlaue + " %" ;
+
+            document.getElementById("message1").innerHTML = "For every Rs. 100 invested in " + compFund + ", Rs" + overlapVlaue + " goes into the securites that are part of the portfolio already";
 
             // console.log(securityWise);
             // console.log(industryWise);
 
             // display the top securities that are overlapping
              // securityWise = [security, sec_portoflio %, sec_selected %, sec_portfolio*sec_selected] sort by column3  
-            plotSecuritesOverlap(securityWise);
+            // plotSecuritesOverlap(securityWise);
+            plotOverlapWithPortfolio(securityWise);
 
 
             }).catch(function(err) {
@@ -385,7 +395,7 @@
                         vector_arr.push( [ sec, vectors[sec][0],vectors[sec][1]]);    
                         }
 
-                    PairWiseOverlap.push( [ combinations[combi][0] + " & " +  combinations[combi][1], dotProduct(vector_arr)[0] ] );
+                    PairWiseOverlap.push( [ combinations[combi][0] + " & " +  combinations[combi][1], getOverlap(vector_arr)[0] ] );
                     
                 
                     }

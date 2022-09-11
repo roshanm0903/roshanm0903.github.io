@@ -9,11 +9,18 @@ function generatePorfolio(Funds, Data){
     var industryWise = {};
 
     var UserFunds = Funds[0].map((_, colIndex) => Funds.map(row => row[colIndex])); // transpose
+    var portfolioAmount = 0;
+    for (index in UserFunds[1]){
+        if ( !UserFunds[2][index]){
+            portfolioAmount += UserFunds[1][index];
+        }
+    }
+    // var portfolioAmount  =  UserFunds[1].reduce((a, b) => a + b, 0);
 
-    var portfolioAmount  =  UserFunds[1].reduce((a, b) => a + b, 0);
 
     // get the single fund name which is to be compared with the portfolio
     var compFund = UserFunds[0][ UserFunds[2].indexOf(true)]; 
+    var compFundAmount = UserFunds[1][ UserFunds[2].indexOf(true)]; 
     
     console.log("portfolio Amount "+portfolioAmount );
     console.log("comp fund "+compFund );
@@ -23,22 +30,27 @@ function generatePorfolio(Funds, Data){
     for (row in FundData){
         // multiply the security fractional ammount with the fund amount
         var Amount = UserFunds[1][ UserFunds[0].indexOf(FundData[row][0])];
-        var secAmount = parseFloat(FundData[row][3]*Amount);
+        var secAmount = 0;
+        if (checkCompFund(compFund,FundData[row]) == 0){
+            secAmount = parseFloat(FundData[row][3]*Amount);
+        }
+        
         FundData[row].push(secAmount);
         
         // console.log("Printing Fund Data");
         // console.log(FundData);
 
         //summarise by security wise
-        if ( FundData[row][1] in securityWise ){     // { "security name 1" : [ amount , portfolio_percentage, compfund_shareholding], "security name w" : [ amount , portfolio_percentage, compfund_shareholding],...  }
+        if ( FundData[row][1] in securityWise ){     // { "security name 1" : [ amount , portfolio_percentage, compfund_shareholding, compfund_], "sec2 ..."
             // security already exists, add the amounts
             securityWise[FundData[row][1]][0] += secAmount; // amount
             securityWise[FundData[row][1]][1] += parseFloat(secAmount/portfolioAmount); // as percentage
             securityWise[FundData[row][1]][2] += checkCompFund(compFund,FundData[row]);
+            securityWise[FundData[row][1]][3] += checkCompFund(compFund,FundData[row])*compFundAmount ;
 
         } else{
             //security doesnt exists, add the security and the amount
-            securityWise[FundData[row][1]] = [ secAmount , parseFloat(secAmount/portfolioAmount), checkCompFund(compFund,FundData[row]) ] ;
+            securityWise[FundData[row][1]] = [ secAmount , parseFloat(secAmount/portfolioAmount), checkCompFund(compFund,FundData[row]), checkCompFund(compFund,FundData[row])*compFundAmount] ;
         }
 
         //sumarise by industry wise
@@ -87,6 +99,66 @@ function dotProduct(vectors){
     }
 
     var value = (100*dot_sum/(Math.sqrt(a_sum)*Math.sqrt(b_sum))) ;
+    console.log(value);
+    console.log("vectors");
+    console.log(vectors);
+
+    //sort the vector on column 4
+    // vectors = getSortedCommonSecurity(vectors);
+
+    return  [Math.round(value), vectors ];
+
+}
+
+function getOverlap(vectors){
+    
+    var overlap_sum = 0;
+    var a_sum = 0;
+    var b_sum = 0;
+
+    for (row in vectors){
+        var a = parseFloat(vectors[row][1] );
+        var b = parseFloat(vectors[row][2] );
+        vectors[row][1] = parseFloat(100*a).toFixed(2);
+        vectors[row][2] = parseFloat(100*b).toFixed(2);
+        vectors[row][3] = Math.min(a,b); //a.b
+        overlap_sum += vectors[row][3];
+        a_sum += a;
+        b_sum += b ;
+        
+    }
+
+    var value = (100*2*overlap_sum/(a_sum+b_sum));
+    console.log(value);
+    console.log("vectors");
+    console.log(vectors);
+
+    //sort the vector on column 4
+    // vectors = getSortedCommonSecurity(vectors);
+
+    return  [Math.round(value), vectors ];
+
+}
+
+function getOverlapWithPortfolio(vectors){
+    
+    //amount in portfolio, share holding in portfolio, share holding in comparing fund, amount in comparing fund
+    
+    var overlap_sum = 0;
+    var b_sum = 0;
+
+    for (row in vectors){
+        var a = parseFloat(vectors[row][0] );
+        var b = parseFloat(vectors[row][3] );
+        vectors[row][1] = parseFloat(a).toFixed(2);
+        vectors[row][2] = parseFloat(b).toFixed(2);
+        vectors[row][3] = Math.min(a,b); //a.b
+        overlap_sum += vectors[row][3];
+        b_sum += b ;
+        
+    }
+
+    var value = (100*overlap_sum/b_sum);
     console.log(value);
     console.log("vectors");
     console.log(vectors);
