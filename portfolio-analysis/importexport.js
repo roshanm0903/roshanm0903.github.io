@@ -43,5 +43,42 @@
     for (row in fundData){
            addRow("Funds",fundData[row]);       
     }
-
   }
+
+  function arrayToCSVString(array){
+    var csv = "";
+    for (let row of array) {
+        for (let col of row) { csv += col + ","; }
+        csv += "\r\n";
+    }
+    return csv;
+  }
+
+  function dictToCSVString(dict){
+    var csv = "";
+    
+    for (let row in dict) {
+        console.log(row);
+        csv += row + ",";
+        for (let col of dict[row]) { csv += col + ","; }
+        csv += "\r\n";
+    }
+    return csv;
+  }
+
+  function exportData(array,id){
+
+        var csv = arrayToCSVString(array);
+        // var csv = dictToCSVString(array);
+
+        var myBlob = new Blob([csv], {type: "text/csv"});
+        var url = window.URL.createObjectURL(myBlob);
+        // var anchor = document.createElement("a");        
+        var anchor = document.getElementById("downloadBtn"+id);        
+        anchor.href = url;
+        anchor.download = "data.csv";
+        // anchor.click();
+        // window.URL.revokeObjectURL(url);
+        // anchor.remove();
+
+     }

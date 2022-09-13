@@ -5,6 +5,7 @@ function showSecurityPlot(){
     document.getElementById("ind_message").style.display = "none";
     document.getElementById('secPlotBtn').classList.add("active");
     document.getElementById('indPlotBtn').classList.remove("active");
+    showSecurityDownloadBtn();
 }
 
 function showIndustryPlot(){
@@ -14,12 +15,37 @@ function showIndustryPlot(){
     document.getElementById("ind_message").style.display = "block";
     document.getElementById('secPlotBtn').classList.remove("active");
     document.getElementById('indPlotBtn').classList.add("active");
+    showIndustryDownloadBtn();
+}
+
+function showSecurityDownloadBtn(){
+    document.getElementById("downloadBtn").classList.add("invisible");
+    document.getElementById("downloadBtn_sec").classList.remove("invisible");
+    document.getElementById("downloadBtn_ind").classList.add("invisible");
+}
+
+function showIndustryDownloadBtn(){
+    document.getElementById("downloadBtn").classList.add("invisible");
+    document.getElementById("downloadBtn_sec").classList.add("invisible");
+    document.getElementById("downloadBtn_ind").classList.remove("invisible");
+}
+
+function showDownloadBtn(){
+    document.getElementById("downloadBtn").classList.remove("invisible");
+    document.getElementById("downloadBtn_sec").classList.add("invisible");
+    document.getElementById("downloadBtn_ind").classList.add("invisible");
 }
 
 function plotDistribution(securityWise,industryWise){
     
     var data_sec = getSortedData(securityWise);  //  data_sec = [   [secuty 1, secury 2, ... ], [amt1, amt2,...],  [per1, per2,... ] ]
     var data_ind = getSortedData(industryWise);
+
+    exportData(transpose(data_sec),"_sec");
+    exportData(transpose(data_ind),"_ind");
+    //make download button visible
+    showSecurityDownloadBtn();
+
 
     document.getElementById("plots").innerHTML = 
         '   <div class="btn-group" role="group" aria-label="Basic example">\
@@ -99,7 +125,7 @@ function plotDistribution(securityWise,industryWise){
 }
 
 function plotSecuritesOverlap(securityWise){
-   
+   //V1 code when dot product and check box was used
     // plot overview graphs
     var vectors = getSortedCommonSecurity(securityWise);
     vectors = transpose(vectors);
@@ -168,6 +194,9 @@ function plotOverlapWithPortfolio(securityWise){
    
     // plot overview graphs
     var vectors = getSortedCommonSecurity(securityWise);
+    
+    showDownloadBtn();
+    exportData(vectors,"");
     vectors = transpose(vectors);
     document.getElementById("plots").innerHTML = ' <canvas id="myChart_sec_ovelap" width=100%  height=' + 5*vectors[0].length +'px"></canvas>';
 
@@ -236,6 +265,8 @@ function plotPairWiseOverlap(combinations){
     // console.log("printing combinations");
     // console.log(combinations);
     // plot overview graphs
+    showDownloadBtn();
+    exportData(combinations,"");
     var combinations = transpose(combinations);
 
     var height  =  10+ 5*combinations[0].length;

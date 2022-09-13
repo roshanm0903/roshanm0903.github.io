@@ -286,7 +286,9 @@
 
             var [ securityWise, industryWise,CompFund, PortfolioAmount] = generatePorfolio(FundsSelected, FundData);
 
+            // console.log("security wise");
             // console.log(securityWise);
+            // console.log("industry wise");
             // console.log(industryWise);
 
 
@@ -295,7 +297,9 @@
             var skew = getskewness(securityWise, industryWise);
 
             console.log(skew);
-            
+            // exportData(securityWise);
+            // exportData(industryWise);
+
 
             putData(FundsSelected, PortfolioAmount,skew).then(function(data){
                         }).catch(function(err) {
@@ -495,6 +499,9 @@
                 </div>
                 
                 <div class="col-12 col-md-7">
+                    <a  id ="downloadBtn" class="float-right invisible" > <i  class="bi bi-download" ></i></a>
+                    <a  id ="downloadBtn_sec" class="float-right invisible" > <i  class="bi bi-download" ></i></a>
+                    <a  id ="downloadBtn_ind" class="float-right invisible" > <i  class="bi bi-download"></i></a>
         
                     <div class="container">
                         <h4 id="message2">
