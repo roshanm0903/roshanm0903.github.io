@@ -265,6 +265,7 @@
 
         function AnalyzePortfolio(){
             document.getElementById("plots").innerHTML =" "; // clear canvas
+            document.getElementById("resultsCard").classList.remove("invisible");
             var FundsSelected  = get_Funds("AnalyzePortfolio");
             var FundData = [];
             var CompFund = 0;
@@ -328,6 +329,7 @@
 
         function FindSelectedOverlap(){
             document.getElementById("plots").innerHTML =" ";
+            document.getElementById("resultsCard").classList.remove("invisible");
 
             var FundsSelected  = get_Funds("SelectedOverlap");
 
@@ -373,6 +375,7 @@
         function FindAllOverlaps(){
             document.getElementById("plots").innerHTML =" ";
             document.getElementById("message1").innerHTML ="";
+            document.getElementById("resultsCard").classList.remove("invisible");
 
             var FundData = [];
             var PairWiseOverlap = [];
@@ -498,21 +501,25 @@
                         </div>
                 </div>
                 
-                <div class="col-12 col-md-7">
-                    <a  id ="downloadBtn" class="float-right invisible" > <i  class="bi bi-download" ></i></a>
-                    <a  id ="downloadBtn_sec" class="float-right invisible" > <i  class="bi bi-download" ></i></a>
-                    <a  id ="downloadBtn_ind" class="float-right invisible" > <i  class="bi bi-download"></i></a>
-        
-                    <div class="container">
-                        <h4 id="message2">
-                        </h4>
-                        <p id="message1">
-                        </p>
-                        <div id="plots">
-                            
+                <div class="col-12 col-md-7" >
+                    <div id ="resultsCard" class="card invisible">
+                        <div class="card-body">
+                                    
+                            <a  id ="downloadBtn" class="float-right invisible" > <i  class="bi bi-download" ></i></a>
+                            <a  id ="downloadBtn_sec" class="float-right invisible" > <i  class="bi bi-download" ></i></a>
+                            <a  id ="downloadBtn_ind" class="float-right invisible" > <i  class="bi bi-download"></i></a>
+                
+                            <div class="container">
+                                <h4 id="message2">
+                                </h4>
+                                <p id="message1">
+                                </p>
+                                <div id="plots">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
+
                 </div>
                   
                   <script>
