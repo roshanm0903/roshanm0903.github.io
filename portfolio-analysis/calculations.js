@@ -68,7 +68,7 @@ function generatePorfolio(Funds, Data){
     // console.log(industryWise);
     
 
-    return [securityWise,industryWise,compFund,portfolioAmount];
+    return [securityWise,industryWise,compFund,portfolioAmount,compFundAmount];
 
 }
 

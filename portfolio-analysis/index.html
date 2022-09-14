@@ -33,6 +33,25 @@
     <script src="plot.js"></script>
     <script src="importexport.js"></script>
 
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="venn.js"></script>
+
+    <style>
+        .venntooltip {
+          position: absolute;
+          text-align: center;
+          width: 128px;
+          height: 30px;
+          background: #333;
+          color: #ddd;
+          padding: 2px;
+          border: 0px;
+          border-radius: 2px;
+          opacity: 0;
+        }
+    </style>
+
+
 	<script type="text/javascript">
         var FundDetails = [];
         var FundSelected = [];
@@ -347,7 +366,7 @@
                 }
 
 
-            var [ securityWise, industryWise, compFund] = generatePorfolio(FundsSelected, FundData);
+            var [ securityWise, industryWise, compFund, PortfolioAmount,compFundAmount] = generatePorfolio(FundsSelected, FundData);
 
             // check the value of overlap
             
@@ -363,6 +382,7 @@
              // securityWise = [security, sec_portoflio %, sec_selected %, sec_portfolio*sec_selected] sort by column3  
             // plotSecuritesOverlap(securityWise);
             plotOverlapWithPortfolio(securityWise);
+            plotOverlapVennDiagram(compFund,PortfolioAmount,compFundAmount,overlapVlaue*compFundAmount/100);
 
 
             }).catch(function(err) {
@@ -445,6 +465,7 @@
 
 <body>
  
+    <!-- <div id="venn"></div> -->
 
     <div class="row">
         <div class="col-1 px-0"> </div>
@@ -473,7 +494,7 @@
                                         Import from excel template <a href="#">  <i id="upload"  class="bi-upload"></i></a>
                                         <input id="upload2" type="file" name=files[] style="display: none">
                                         <br>
-                                        <a>Download the template from <a href="https://roshanm0903.github.io/portfolio-analysis/PortfolioInputTemplate.xlsx">Here</a></a>
+                                        <a>Download the template from <a href="PortfolioInputTemplate.xlsx">Here</a></a>
                                     </form>
                                   </div>
                                   <br>
@@ -487,7 +508,7 @@
                             <br>
                             <div class="card" >
                                 <div class="card-body">
-                                    <h5 class="card-title">Add fund to compare with portfolio</h5>
+                                    <h6 class="card-title">Add fund to compare with portfolio</h6>
                                         <div id='CompFund'></div>
                                   <a href="#" id="AddFundsBtn" class="btn btn-outline-primary btn-sm float-left" onclick="addRow('CompFund')">Add Fund</a>
                                     <br>
