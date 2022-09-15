@@ -213,7 +213,7 @@ function plotOverlapWithPortfolio(securityWise){
                            backgroundColor:  "#ff9999"
                         },
                         { label:"Holding in Selected Fund", 
-                           data: vectors[3],
+                           data: vectors[2],
                            backgroundColor:"#99c2ff"
                         }
                         
