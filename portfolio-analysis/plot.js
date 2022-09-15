@@ -237,7 +237,7 @@ function plotOverlapWithPortfolio(securityWise){
                           ticks: {
                             beginAtZero: true,
                             callback: function(tick) {
-                              return parseInt(tick).toString() + "%";
+                              return "₹" + parseInt(tick).toString();
                             }
                           }
                         }]
