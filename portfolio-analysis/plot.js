@@ -71,7 +71,8 @@ function plotDistribution(securityWise,industryWise){
             type: "horizontalBar",
             data: {labels: data_sec[0].slice(0, limit),
                 datasets: [{ label: 'Stockwise Distribution',
-                            data:data_sec[1].slice(0, limit)}]
+                            data:data_sec[1].slice(0, limit),
+                            backgroundColor:  "#99c2ff" }]
             },
             options: {
                     responsive: true,
@@ -98,7 +99,9 @@ function plotDistribution(securityWise,industryWise){
     var myChart_ind = new Chart("myChart_ind", {
             type: "horizontalBar",
             data: {labels: data_ind[0].slice(0, limit),
-                datasets: [{ label: 'Industrywise Distribution', data:data_ind[1].slice(0, limit) }]
+                datasets: [{ label: 'Industrywise Distribution', 
+                                data:data_ind[1].slice(0, limit),
+                                backgroundColor:  "#99c2ff" }]
             },
             options: {
                     responsive: true,
@@ -277,7 +280,9 @@ function plotPairWiseOverlap(combinations){
     const config = new Chart("myChart_overlap",{
         type: 'horizontalBar',
         data: {labels: combinations[0],
-            datasets: [{ label:"Pair wise overlap", data:combinations[1]}]
+            datasets: [{ label:"Pair wise overlap", 
+                          data:combinations[1],
+                          backgroundColor:  "#99c2ff"}]
         },
         options: {
             indexAxis: 'y',
