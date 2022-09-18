@@ -201,7 +201,7 @@ function plotOverlapWithPortfolio(securityWise){
     showDownloadBtn();
     exportData(vectors,"");
     vectors = transpose(vectors);
-    document.getElementById("plots").innerHTML = ' <div id="venn" class="text-center"></div> <canvas id="myChart_sec_ovelap" width=100%  height=' + 5*vectors[0].length +'px"></canvas>';
+    document.getElementById("plots").innerHTML = ' <div id="venn" class="text-center"> <br>Hover on the Venn Diagram to view the overlap amounts </div>  <canvas id="myChart_sec_ovelap" width=100%  height=' + 5*vectors[0].length +'px"></canvas>';
 
     console.log("printing final vectors");
     console.log(vectors);
