@@ -41,8 +41,8 @@ function plotDistribution(securityWise,industryWise){
     var data_sec = getSortedData(securityWise);  //  data_sec = [   [secuty 1, secury 2, ... ], [amt1, amt2,...],  [per1, per2,... ] ]
     var data_ind = getSortedData(industryWise);
 
-    exportData(transpose(data_sec),"_sec");
-    exportData(transpose(data_ind),"_ind");
+    exportData(transpose(data_sec),"_sec","SecurityWiseDistribution");
+    exportData(transpose(data_ind),"_ind","IndustryWiseDistribution");
     //make download button visible
     showSecurityDownloadBtn();
 
@@ -199,7 +199,7 @@ function plotOverlapWithPortfolio(securityWise){
     var vectors = getSortedCommonSecurity(securityWise);
     
     showDownloadBtn();
-    exportData(vectors,"");
+    exportData(vectors,"","OverlapWithPortfolio");
     vectors = transpose(vectors);
     document.getElementById("plots").innerHTML = ' <div id="venn" class="text-center"> <br>Hover on the Venn Diagram to view the overlap amounts </div>  <canvas id="myChart_sec_ovelap" width=100%  height=' + 5*vectors[0].length +'px"></canvas>';
 
@@ -270,9 +270,9 @@ function plotPairWiseOverlap(combinations){
     // console.log(combinations);
     // plot overview graphs
     showDownloadBtn();
-    exportData(combinations,"");
+    exportData(combinations,"","PairWiseOverlap");
     var combinations = transpose(combinations);
-
+    
     var height  =  10+ 5*combinations[0].length;
     document.getElementById("plots").innerHTML = '<canvas id="myChart_overlap" width=100%  height='+  height +'px"></canvas>';
 

@@ -66,10 +66,26 @@
     return csv;
   }
 
-  function exportData(array,id){
+  function exportData(array,id,exportType){
+
 
         var csv = arrayToCSVString(array);
         // var csv = dictToCSVString(array);
+
+      if (exportType =="SecurityWiseDistribution"){
+        var headerRow="Security, Amount in Portfolio, Weight in Portfolio \r\n";
+      }
+      if (exportType =="IndustryWiseDistribution"){
+        var headerRow="Industry, Amount in Portfolio, Weight in Portfolio \r\n";
+      }
+      if (exportType =="OverlapWithPortfolio"){
+        var headerRow="Security, Amount in Portfolio, Amount in selected Fund, Common Amount \r\n";
+      }
+      if (exportType =="PairWiseOverlap"){
+        var headerRow="Fund Combination, Overlap in the Funds (in %) \r\n";
+      }
+
+      var csv = headerRow + csv;
 
         var myBlob = new Blob([csv], {type: "text/csv"});
         var url = window.URL.createObjectURL(myBlob);
