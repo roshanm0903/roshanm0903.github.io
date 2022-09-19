@@ -396,6 +396,20 @@
             plotOverlapVennDiagram(compFund,PortfolioAmount,compFundAmount,overlapVlaue*compFundAmount/100);
 
 
+            var skew = getskewness(securityWise, industryWise);
+
+            console.log(skew);
+            // exportData(securityWise);
+            // exportData(industryWise);
+
+
+            putData(FundsSelected, PortfolioAmount,skew).then(function(data){
+            }).catch(function(err) {
+            // Run this when promise was rejected via reject()
+            console.log(err);
+            })
+
+
             }).catch(function(err) {
             // Run this when promise was rejected via reject()
             console.log(err);
