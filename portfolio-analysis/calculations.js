@@ -246,8 +246,8 @@ function getCombinations(Funds){
 
 function getskewness(securityWise,industryWise){
 
-    securityWise = transpose(getSortedData(securityWise));
-    industryWise = transpose(getSortedData(industryWise));
+    var securityWise = transpose(getSortedData(securityWise));
+    var industryWise = transpose(getSortedData(industryWise));
 
     var sec_fifty = 0;
     var sec_eighty = 0;

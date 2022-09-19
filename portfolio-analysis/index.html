@@ -379,6 +379,14 @@
 
             var [ securityWise, industryWise, compFund, PortfolioAmount,compFundAmount] = generatePorfolio(FundsSelected, FundData);
 
+            var skew = getskewness(securityWise, industryWise);
+
+                putData(FundsSelected, PortfolioAmount,skew).then(function(data){
+                }).catch(function(err) {
+                // Run this when promise was rejected via reject()
+                console.log(err);
+                })
+
             // check the value of overlap
             
             var [overlapVlaue , securityWise] = getOverlapWithPortfolio(securityWise);
@@ -396,19 +404,7 @@
             plotOverlapVennDiagram(compFund,PortfolioAmount,compFundAmount,overlapVlaue*compFundAmount/100);
 
 
-            var skew = getskewness(securityWise, industryWise);
-
-            console.log(skew);
-            // exportData(securityWise);
-            // exportData(industryWise);
-
-
-            putData(FundsSelected, PortfolioAmount,skew).then(function(data){
-            }).catch(function(err) {
-            // Run this when promise was rejected via reject()
-            console.log(err);
-            })
-
+           
 
             }).catch(function(err) {
             // Run this when promise was rejected via reject()
