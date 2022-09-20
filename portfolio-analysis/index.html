@@ -76,7 +76,7 @@
             document.getElementById("AnalyzePortfolioBtn").style.display = "none";
             document.getElementById("FindSelectedOverlapBtn").style.display = "none";
             document.getElementById("FindAllOverlapsBtn").style.display = "none";
-            document.getElementById("message2").innerHTML= '<div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">\
+            document.getElementById("message_first_time_Load").innerHTML= '<div class="spinner-border" role="status">\
                                                                 <span class="sr-only">Loading...</span>\
                                                             </div>';
         $("#FundInput").select2();
@@ -95,7 +95,7 @@
 
            var result = data; 
 		   	console.log(result.data[1].FundName);
-            document.getElementById("message2").innerHTML= "" ;
+            document.getElementById("message_first_time_Load").innerHTML= "" ;
 			// console.log("Printing result");
             document.getElementById("AddFundsBtn").style.display = "block";
 
@@ -496,6 +496,8 @@
         <div class="col-10 px-0">
             <h1>Portfolio Analyser
             </h1>
+            <h4 id="message_first_time_Load">
+            </h4>
             <h4>
                 Mutual fund distribution across stocks & industry and overlap analysis<br>
             </h4>
