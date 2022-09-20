@@ -84,7 +84,7 @@
         // old url      url: "https://script.google.com/macros/s/AKfycbzEqBzXTk0EPb9Hln-sw72hkUnDZD0C4_c_9laHcpL9KglW5R3ZLUpgrtgZpwcoxncYXg/exec"
 			$.ajax({ 
            method: "get", 
-           url: "https://portfolioanalyzer.000webhostapp.com/getdata.php?Type=FundNames&FundNames=",
+           url: "https://portfolioanalyzerbackend.000webhostapp.com/getdata.php?Type=FundNames&FundNames=",
         //    data: {}
                 error: function (err) {
                     document.getElementById("message2").innerHTML= "Erro Loading Data : " + JSON.stringify(err, null, 2);
@@ -191,10 +191,11 @@
             console.log("Getting data from appsciprt");
 
             // old API url "https://script.google.com/macros/s/AKfycbyIy6shJ7Mh1Zxlo3ERwMatVcXIEmNvvbn7smzQ6l0ki4cSQg62hfJicZUaduV-MgFF/exec",
+            // https://portfolioanalyzer.000webhostapp.com/getdata.php
             return new Promise(function(resolve, reject) {
                 $.ajax({
                 method: "get",
-                url:    "https://portfolioanalyzer.000webhostapp.com/getdata.php",
+                url:    "https://portfolioanalyzerbackend.000webhostapp.com/getdata.php",
                 data: { Type:"FundHoldings", FundNames : fundname_concat },
                 success: function(data) {
                     resolve(data["data"]); // Resolve promise and go to then()
@@ -279,7 +280,7 @@
             return new Promise(function(resolve, reject) {
                 $.ajax({
                 method: "post",
-                url:    "https://portfolioanalyzer.000webhostapp.com/putdata.php",
+                url:    "https://portfolioanalyzerbackend.000webhostapp.com/putdata.php",
                 data: { skew:Skew, amount:Amount, portfolioFunds: getFundNames(PortfolioFunds) },
                 success: function(data) {
                     resolve(); // Resolve promise and go to then()
