@@ -54,9 +54,9 @@ function plotDistribution(securityWise,industryWise){
             </div>\
             <br>\
             <p id="sec_message"></p> \
-            <canvas id="myChart_sec" width=100%  height=' + 3*data_sec[0].length + 'px"></canvas>\
+            <canvas id="myChart_sec" width=100%  height=' + Math.min(300,3*data_sec[0].length) + 'px"></canvas>\
             <p id="ind_message"></p>\
-            <canvas id="myChart_ind" width=100%  height=' + 3*data_ind[0].length + 'px"></canvas>';
+            <canvas id="myChart_ind" width=100%  height=' + Math.min(300,3*data_ind[0].length) + 'px"></canvas>';
 
             document.getElementById("ind_message").style.display = "none";
             document.getElementById("myChart_ind").style.display = "none";
