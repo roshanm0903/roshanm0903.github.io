@@ -12,7 +12,7 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6689558701452674"
     crossorigin="anonymous"></script>
 	
-    <title>Portfolio Analyzer</title>
+    <title>Portfolio Analysis</title>
     <meta name="description" content="Free tool to analyze mutual fund portfolio and find overlaps to reduce risks of concentration, Free Portfolio Analysis tool">
 
     <meta name="viewport" content="width=device-width" />
@@ -502,7 +502,7 @@
                 <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #d7e4f9;">
 
                 <!-- Navbar content -->
-                <a class="navbar-brand" href="#">Portfolio Analyzer</a>
+                <a class="navbar-brand" href="#">Portfolio Analysis</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
@@ -529,7 +529,7 @@
             <h4>
                 Mutual fund distribution across stocks & industry and overlap analysis<br>
             </h4>
-            <a href="https://roshanm0903.github.io/blogs/Is_Your_Mutual_Fund_Portfolio_Really_Diversified.html">Importance of checking for overlaps<br><br></a> 
+            <!-- <a href="https://roshanm0903.github.io/blogs/Is_Your_Mutual_Fund_Portfolio_Really_Diversified.html">Importance of checking for overlaps<br><br></a>  -->
         
         
             <div class="row">
@@ -544,10 +544,10 @@
                                   <br>
                                   <div class="container row">
                                     <form enctype="multipart/form-data">
-                                        Import from excel template <a href="#">  <i id="upload"  class="bi-upload"></i></a>
+                                        Import from Excel template <a href="#">  <i id="upload"  class="bi-upload"></i></a>
                                         <input id="upload2" type="file" name=files[] style="display: none">
                                         <br>
-                                        <a>Download the template from <a href="PortfolioInputTemplate.xlsx">Here</a></a>
+                                        <a>Download the Excel template from <a href="PortfolioInputTemplate.xlsx">Here</a></a>
                                     </form>
                                   </div>
                                   <br>
@@ -573,6 +573,9 @@
                             <br>
                             
                         </div>
+
+                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#RecommendationModal">Get Recommendations</button>
+
                 </div>
                 
                 <div class="col-12 col-md-7 " >
@@ -594,6 +597,8 @@
                         </div>
                     </div>
 
+
+
                 </div>
                   
                   <script>
@@ -605,6 +610,7 @@
                     
                   </script>
 
+                <div><br></div>
                 <div class="col-12 col-md-12">
                     
                         <h4>Steps:</h4>
@@ -643,8 +649,8 @@
         
                 </div>  
         
+            </div>
         </div>
-
         <div class="col-1 px-0"> </div>
 
     </div>
@@ -657,10 +663,10 @@
 }, 3000);
 </script> -->
 
-<button style="position:fixed;bottom:20px;left:10px;margin:0;padding:5px 3px;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalCenter">Feedback</button>
+<button style="position:fixed;top:20px;right:20px;margin:0;padding:5px 3px;" type="button" class="btn btn-primary" data-toggle="modal" data-target="#FeedbackModal">Feedback</button>
 
 
-<div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="FeedbackModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -679,6 +685,24 @@
     </div>
   </div>
 
+  <div class="modal fade" id="RecommendationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Feedback</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd9SabNtOS4EkBh2NnQRAc2C3Tp_eEZPIBU2l5j_zSKo9bIhA/viewform?embedded=true" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 
 </body>
