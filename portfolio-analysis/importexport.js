@@ -15,8 +15,8 @@
         //    for (row in result){
         //     addRow("fromXLS",fundData[row]);
         //    }
-        console.log(" Ma here");
-          console.log(JSON.parse(json_object));
+        // console.log(" Ma here");
+          // console.log(JSON.parse(json_object));
             addFundRowsFromXls(JSON.parse(json_object));
           
         //   jQuery('#xlx_json').val(json_object);
