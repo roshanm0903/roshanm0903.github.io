@@ -36,6 +36,15 @@ function showDownloadBtn(){
     document.getElementById("downloadBtn_ind").classList.add("invisible");
 }
 
+function to_percentage(list){
+    new_row = []
+    for (item in list){
+        // console.log(item)
+        new_row.push(list[item]*100)
+    }
+    return new_row
+}
+
 function plotDistribution(securityWise,industryWise){
     
     var data_sec = getSortedData(securityWise);  //  data_sec = [   [secuty 1, secury 2, ... ], [amt1, amt2,...],  [per1, per2,... ] ]
@@ -72,7 +81,13 @@ function plotDistribution(securityWise,industryWise){
             data: {labels: data_sec[0].slice(0, limit),
                 datasets: [{ label: 'Stockwise Distribution',
                             data:data_sec[1].slice(0, limit),
-                            backgroundColor:  "#99c2ff" }]
+                            backgroundColor:  "#99c2ff" },
+                         {  label: 'Share in Portfolio (%)',
+                            data: to_percentage(data_sec[2].slice(0, limit)),
+                            // fillColor: "rgba(220,220,220,0)",
+                        fill:false },
+                        ]
+                        
             },
             options: {
                     responsive: true,
@@ -101,7 +116,13 @@ function plotDistribution(securityWise,industryWise){
             data: {labels: data_ind[0].slice(0, limit),
                 datasets: [{ label: 'Industrywise Distribution', 
                                 data:data_ind[1].slice(0, limit),
-                                backgroundColor:  "#99c2ff" }]
+                                backgroundColor:  "#99c2ff" },
+                            { label: 'Share in Portfolio (%)', 
+                            data: to_percentage(data_ind[2].slice(0, limit)),
+                            fill:false },
+                        
+                            ]
+
             },
             options: {
                     responsive: true,
