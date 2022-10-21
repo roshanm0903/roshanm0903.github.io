@@ -277,7 +277,45 @@
             return FundSelected;
             
         }
+        
     
+        
+        function update_skew(sec_50_per){
+
+            // getPopulationSkewData(FundsSelected).then(function(data) {
+
+            // })
+
+             populationDistribution = new Promise(function(resolve, reject) {
+                $.ajax({
+                method: "get",
+                url:    apiURL + "getdata.php",
+                data: { Type:"Population50PercentDistribution"},
+                success: function(data) {
+                    resolve(data); // Resolve promise and go to then()
+                    //update message2
+                    if (sec_50_per < parseFloat(data["Median"])- 0.05){
+                        document.getElementById("sec_message").innerHTML += "<br><b>Your portfolio is more skewed compared to other people using this tool. Consider diversifying futher.</b>";
+                    }
+                    else if (sec_50_per > parseFloat(data["Median"]) + 0.05){
+                        document.getElementById("sec_message").innerHTML += "<br><b>Your portfolio is less skewed compared to other people using this tool.</b>";
+                    }else{
+                        document.getElementById("sec_message").innerHTML += "<br><b>Your portfolio diversification is similar to average people using this tool.</b>";
+                    }
+                    
+                    
+
+
+                },
+                error: function(err) {
+                    document.getElementById("message2").innerHTML= "Erro Loading Data : " + JSON.stringify(err, null, 2);
+                    reject(err); // Reject the promise and go to catch()
+                }
+                });
+            });
+
+
+        }
 
         function putData(PortfolioFunds,Amount,Skew){
 
@@ -318,25 +356,11 @@
                     }
                     console.log("Fund dfadgdas is" + fund);
                 }
-            // console.log("fund data  iss   ");
-            // console.log(FundData);
 
             var [ securityWise, industryWise,CompFund, PortfolioAmount] = generatePorfolio(FundsSelected, FundData);
 
-            // console.log("security wise");
-            // console.log(securityWise);
-            // console.log("industry wise");
-            // console.log(industryWise);
-
-
-
             plotDistribution(securityWise,industryWise);
             var skew = getskewness(securityWise, industryWise);
-
-            console.log(skew);
-            // exportData(securityWise);
-            // exportData(industryWise);
-
 
             putData(FundsSelected, PortfolioAmount,skew).then(function(data){
                         }).catch(function(err) {
@@ -353,15 +377,15 @@
 
             document.getElementById("message2").innerHTML= " " ;
 
+            update_skew(skew["security"]["50_per"]);
+
             }).catch(function(err) {
             // Run this when promise was rejected via reject()
             console.log(err);
-            })
-
-
-            
+            })  
 
         }
+
 
         function FindSelectedOverlap(){
             document.getElementById("plots").innerHTML =" ";
