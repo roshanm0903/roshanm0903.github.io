@@ -294,13 +294,15 @@
                 success: function(data) {
                     resolve(data); // Resolve promise and go to then()
                     //update message2
+                    document.getElementById("sec_message").innerHTML += '<br><i class="bi bi-lightbulb-fill" style="color:coral"></i>';
+
                     if (sec_50_per < parseFloat(data["Median"])- 0.05){
-                        document.getElementById("sec_message").innerHTML += "<br><b>Your portfolio is more skewed compared to other people using this tool. Consider diversifying futher.</b>";
+                        document.getElementById("sec_message").innerHTML += "<b>Your portfolio is more skewed compared to other people using this tool. Consider diversifying futher.</b>";
                     }
                     else if (sec_50_per > parseFloat(data["Median"]) + 0.05){
-                        document.getElementById("sec_message").innerHTML += "<br><b>Your portfolio is less skewed compared to other people using this tool.</b>";
+                        document.getElementById("sec_message").innerHTML += "<b>Your portfolio is less skewed compared to other people using this tool.</b>";
                     }else{
-                        document.getElementById("sec_message").innerHTML += "<br><b>Your portfolio diversification is similar to average people using this tool.</b>";
+                        document.getElementById("sec_message").innerHTML += "<b>Your portfolio diversification is similar to average people using this tool.</b>";
                     }
                     
                     
