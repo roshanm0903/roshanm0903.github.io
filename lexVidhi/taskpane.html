@@ -1,0 +1,159 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. -->
+<!-- This file shows how to design a first-run page that provides a welcome screen to the user about the features of the add-in. -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cenco Task Pane Add-in</title>
+
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <!-- Template styles -->
+    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="container-fluid">
+    <section id="sideload-msg" class="text-center mt-5">
+        <h2>Please <a target="_blank" href="https://learn.microsoft.com/office/dev/add-ins/testing/test-debug-office-add-ins#sideload-an-office-add-in-for-testing">sideload</a> your add-in to see app body.</h2>
+    </section>
+    <main id="app-body" class="d-flex flex-column vh-100">
+        <div class="landing-container m-2 p-2">
+            <div class="text-center mb-4">
+                <h2 class="display-6 mb-3">Welcome to Cenco</h2>
+                <p class="lead mb-0">Your AI-powered legal document assistant</p>
+            </div>
+            <div class="features-grid mb-4">
+                <div class="feature-item">
+                    <i class="bi bi-magic text-primary"></i>
+                    <h5>Smart Suggestions</h5>
+                    <p>Intelligent recommendations for clearer, more precise legal language</p>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-chat-dots text-primary"></i>
+                    <h5>Legal Q&A</h5>
+                    <p>Get instant answers about your document content</p>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-clipboard-check text-primary"></i>
+                    <h5>Document Review</h5>
+                    <p>Comprehensive analysis and improvement suggestions</p>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-lightning text-primary"></i>
+                    <h5>Quick Fill</h5>
+                    <p>Automated template field extraction and updates</p>
+                </div>
+            </div>
+
+            <div class="login-section bg-light p-4 r shadow-sm">
+                <h4 class="mb-3">Sign In to Get Started</h4>
+                <div id="login-error" class="alert alert-danger" style="display: none;"></div>
+                <div class="mb-3">
+                    <input type="email" id="login-email" class="form-control " placeholder="Enter your email" />
+                </div>
+                <button id="login-btn" class="btn btn-primary w-100">Continue</button>
+            </div>
+        </div>
+        <nav class="nav-fixed" id="nav-tabs" style="display: none;">
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
+                <button class="nav-link" id="nav-qa-tab" data-bs-toggle="tab" data-bs-target="#nav-qa" type="button" role="tab" aria-controls="nav-qa" aria-selected="false">Ask</button>
+                <button class="nav-link" id="nav-quickfill-tab" data-bs-toggle="tab" data-bs-target="#nav-quickfill" type="button" role="tab" aria-controls="nav-quickfill" aria-selected="false">Quick Fill</button>
+                <button class="nav-link" id="nav-review-tab" data-bs-toggle="tab" data-bs-target="#nav-review" type="button" role="tab" aria-controls="nav-review" aria-selected="false">Review</button>
+                <button class="nav-link" id="nav-timeline-tab" data-bs-toggle="tab" data-bs-target="#nav-timeline" type="button" role="tab" aria-controls="nav-timeline" aria-selected="false">Timeline</button>
+                <button class="nav-link" id="logout-btn" onclick="handleLogout()">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </nav>
+        <div class="tab-content flex-grow-1 overflow-auto" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div class="home-container" style="display: none;">
+                    <h3>Document Summary</h3>
+                    <p id="document-summary">Loading summary...</p>
+                    <h3>Quick Actions</h3>
+                    <p>Select text and click <b>Improve Text</b> to enhance it.</p>
+                    <button id="improve-text" class="btn btn-primary btn-lg mb-3 disabled" disabled>Improve Text</button>
+                    <button id="start-review" class="btn btn-primary btn-lg mb-3">Review Document</button>
+                    <p><label id="item-subject"></label></p>
+                </div>
+            </div>
+            <div class="tab-pane fade p-0"  id="nav-qa" role="tabpanel" aria-labelledby="nav-qa-tab">
+            <div class="chat-container p-0 m-0 r d-flex flex-column h-100">
+                <div class="chat-messages flex-grow-1 overflow-auto border p-3 mb-3 rounded" id="chat-messages">
+                    <div class="chat-empty-state">
+                        <i class="bi bi-chat-dots"></i>
+                        <h4>Ask me anything about your document</h4>
+                        <p>I can help you understand and analyze your legal document.</p>
+                        <div class="example-questions">
+                            <p class="mb-2"><strong>Try asking:</strong></p>
+                            <ul class="list-unstyled">
+                                <li>• What are the key obligations of each party?</li>
+                                <li>• What is the termination clause?</li>
+                                <li>• Explain the payment terms</li>
+                                <li>• What are the important dates?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="chat-input" class="form-control" placeholder="Type your question here..." />
+                    <button id="send-chat" class="btn btn-primary">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+            </div>
+            </div>
+            <div class="tab-pane fade" id="nav-quickfill" role="tabpanel" aria-labelledby="nav-quickfill-tab">
+                <div class="p-3">
+                    <h3>Template Fields</h3>
+                    <div id="fields-form">
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button id="update-fields" class="btn btn-primary" disabled>Update Document</button>
+                        <!-- Message will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-review" role="tabpanel" aria-labelledby="nav-review-tab">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h3 class="mb-0">Document Review</h3>
+                    <button class="btn btn-outline-primary btn-sm" id="refresh-review">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+                <div id="review-suggestions">
+                    <!-- Suggestions will be loaded here -->
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-timeline" role="tabpanel" aria-labelledby="nav-timeline-tab">
+                <div class="d-flex justify-content-between align-items-center p-3">
+                    <h3 class="mb-0">Document Timeline</h3>
+                    <button class="btn btn-outline-primary btn-sm" id="refresh-timeline">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+                <div id="timeline-container" class="px-3">
+                    <!-- Timeline will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
+</html>
